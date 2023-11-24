@@ -1,11 +1,15 @@
-import express from 'express';
+import express, { json } from 'express';
 import { join } from 'path';
 import Database from 'better-sqlite3';
 import { sha256 } from './utils';
-
+import multer from 'multer';
 
 const app = express();
 const db = Database('database.db', { verbose: console.log });
+
+// Set up multer for file uploads
+const upload = multer({ dest: 'uploads/' });
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(join(__dirname, 'public')));
@@ -88,16 +92,19 @@ app.post('/admin/edit', (req, res) => {
   const updateStmt = db.prepare('UPDATE users SET name = ?, surname = ?, email = ?, password = ? WHERE email = ?');
 });
 
-app.post('/admin/company', (req, res) => {
-  const { name, description, logo, address, city } = req.body;
-  const insertStmt = db.prepare('INSERT INTO companies (name, description, logo, address, city /) VALUES (?, ?, ?, ?, ? /)');
+app.post('/admin/company', upload.single('logo'), (req, res) => {
+  const { name, description, address, city } = req.body;
+  const logo = req.file ? req.file.path : null; // Get the path of the uploaded file
+  const insertStmt = db.prepare('INSERT INTO companies (name, description, logo, address, city) VALUES (?, ?, ?, ?, ?)');
   insertStmt.run(name, description, logo, address, city);
-  res.send('<script>alert("Company added"); window.location.href="/admin/company";</script>');
+  res.json({ message: 'Company added'	})
 });
 
 app.post('/admin/peleton', (req, res) => {
   const { name, companies_id } = req.body;
-  const insertStmt = db.prepare('INSERT INTO peleton (name, companies_id /) VALUES (?, ? /)');
+  const insertStmt = db.prepare('INSERT INTO peleton (name, companies_id) VALUES (?, ?)');
+  insertStmt.run(name, companies_id);
+  res.json({ message: 'Peleton added'	})
 });
 
 

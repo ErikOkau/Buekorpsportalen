@@ -9,14 +9,15 @@
     
 </style>
 <body>
-    <form id="peletonForm">
+    <form id="peletonForm" action="/admin/peleton" method="POST">
         <label for="name">Peleton Name:</label>
         <input type="text" id="name" name="name" required>
 
         <label for="companies_id">Companies ID:</label>
         <input type="text" id="companies_id" name="companies_id" required>
 
-        <button type="submit">Add Peleton</button>
+
+        <input class="btn" type="submit" value="Add Peleton">
     </form>
 
     <script>
@@ -35,11 +36,7 @@
 
             .then(response => response.json())  
             .then(data => {
-                if (data.message === "Peleton added successfully") {
-                    window.alert("Peleton added successfully");
-                } else {
-                    window.alert(data.message);
-                }
+                alert(data.message);
             });
         });
     </script>

@@ -140,7 +140,7 @@ textarea {
 <body>
     <div class="register-container">
         <h1>Create Company</h1>
-        <form id="companyForm">
+        <form id="companyForm" action="/admin/company" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name" id="remove_bg">Company Name:</label>
                 <input type="text" id="name" name="name" required>
@@ -161,32 +161,34 @@ textarea {
                 <label for="city" id="remove_bg">City:</label>
                 <input type="text" id="city" name="city" required>
             </div>
-            <button class="btn" type="submit">Add Company</button>
+ 
+            <input class="btn" type="submit" value="Add Company">
         </form>
     </div>
     <script>
-        document.getElementById('companyForm').addEventListener('submit', function(event) {
+       document.getElementById('companyForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const name = document.getElementById('name').value;
             const description = document.getElementById('description').value;
-            const logo = document.getElementById('logo').value;
+            const logo = document.getElementById('logo').files[0];
             const address = document.getElementById('address').value;
             const city = document.getElementById('city').value;
-          
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('description', description);
+            formData.append('logo', logo);
+            formData.append('address', address);
+            formData.append('city', city);
+
             fetch('/admin/company', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: name, description: description, logo: logo, address: address, city: city}),
+                body: formData,
             })
+
             .then(response => response.json())
             .then(data => {
-                if (data.message === "Company added successfully") {
-                    window.alert("Company added successfully");
-                } else {
-                    window.alert(data.message);
-                }
+                alert(data.message);
             });
         });
     </script>
