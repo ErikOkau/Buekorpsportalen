@@ -7,32 +7,53 @@
 
     <link rel="stylesheet" href="../css/login.css">
     <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="/leader_page/">
 </head>
+<script>
+
+// Handle the form submit event
+function handleLoginFormSubmit(event) {
+    event.preventDefault();
+
+    // Get email and password from the form
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    // Send login request
+    fetch('/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email, password: password }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message === "Login successful") {
+        switch (data.role) {
+          case 'Admin':
+            window.location.href = "/admin";
+            break;
+          case 'Leader':
+            window.location.href = "/leader";
+            break;
+          default:
+            window.location.href = "/";
+        }
+      } else {
+        window.alert(data.message);
+      }
+    });
+  }
+
+// Attach event handler to form submit event
+document.getElementById('loginForm').addEventListener('submit', handleLoginFormSubmit);
+
+</script>
 <body>
-    <nav>
-        <ul class="animated-nav">
-            <li>
-                <a href="/index.html" class="nav-link">Medlemstabell</a>
-            </li>
-            <li>
-                <a href="/index.html" class="nav-link">Peletonstabell</a>
-            </li>
-            <li>
-                <a href="/index.html" class="nav-link">Kompanitabell</a>
-            </li>
-            <li>
-                <a href="/index.html" class="nav-link">Foreldretabell</a>
-            </li>
-            <li>
-                <a href="index.html" class="nav-link login-link">Login</a>
-            </li>
-        </ul>
-    </nav>
-
-
     <div class="login-container">
         <h1>Login</h1>
-        <form action="/login" method="POST">
+        <form id="loginForm" action="/login" method="POST">
           <div class="form-group">
             <label id="remove_bg" for="email">Email</label>
             <input type="email" id="email" name="email" required>
@@ -43,7 +64,7 @@
           </div>
           <button type="submit" class="btn">Login</button>
           <div class="ikke_bruker">
-            <p id="remove_bg">Ikke bruker? Registrer deg <a id="remove_bg"><a href="/register/" id="remove_bg" class="Register_link">her</a></a></p>
+            <p id="remove_bg">Ikke bruker? Registrer deg <a id="remove_bg"><a href="/admin_page/register/" id="remove_bg" class="Register_link">her</a></a></p>
           </div>
         </form>
       </div>

@@ -44,7 +44,7 @@ export interface Parents {
     user_id: number;
 }
 
-export interface member_parent {
+export interface Member_parent {
     id: number;
     member_id: number;
     parent_id: number;

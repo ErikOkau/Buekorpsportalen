@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company</title>
+    <link rel="stylesheet" href="../css/register.css">
+</head>
+
+<style>
+* {
+    background-color: #333;
+}
+
+.register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10%;
+    animation: slideIn 1s ease-in-out;
+}
+
+h1 {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    width: 100%;
+    background-color: white;
+}
+
+label {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    max-width: 100%;
+    min-width: 100%;
+    max-height: 144px;
+}
+
+.btn {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    background-color: #ff4081;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: background-color 0.5s ease-in-out;
+}
+
+.btn:hover {
+    background-color: #333;
+}
+
+#remove_bg, #description, #name, #logo, #address, #city{
+    background-color: white;
+}
+
+@keyframes fadeIn {
+    from {
+            opacity: 0;
+    }
+
+    to {
+            opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+            transform: translateX(-100%);
+    }
+
+    to {
+            transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+            transform: scale(1);
+    }
+
+    50% {
+            transform: scale(1.1);
+    }
+
+    100% {
+            transform: scale(1);
+    }
+}
+
+.dropdown-content {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    background-color: white;
+}
+</style>
+<body>
+    <div class="register-container">
+        <h1>Create Company</h1>
+        <form id="companyForm">
+            <div class="form-group">
+                <label for="name" id="remove_bg">Company Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="description" id="remove_bg">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="logo" id="remove_bg">Logo:</label>
+                <input type="file" id="logo" name="logo" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="address" id="remove_bg">Address:</label>
+                <input type="text" id="address" name="address" required>
+            </div>
+            <div class="form-group">
+                <label for="city" id="remove_bg">City:</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+            <button class="btn" type="submit">Add Company</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('companyForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+            const logo = document.getElementById('logo').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+          
+            fetch('/admin/company', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: name, description: description, logo: logo, address: address, city: city}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "Company added successfully") {
+                    window.alert("Company added successfully");
+                } else {
+                    window.alert(data.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peleton</title>
+</head>
+<style>
+    
+</style>
+<body>
+    <form id="peletonForm">
+        <label for="name">Peleton Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="companies_id">Companies ID:</label>
+        <input type="text" id="companies_id" name="companies_id" required>
+
+        <button type="submit">Add Peleton</button>
+    </form>
+
+    <script>
+        document.getElementById('peletonForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const companies_id = document.getElementById('companies_id').value;
+
+            fetch('/admin/peleton', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: name, companies_id: companies_id}),
+            })
+
+            .then(response => response.json())  
+            .then(data => {
+                if (data.message === "Peleton added successfully") {
+                    window.alert("Peleton added successfully");
+                } else {
+                    window.alert(data.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
