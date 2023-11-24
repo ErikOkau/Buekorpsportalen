@@ -51,11 +51,10 @@ CREATE TABLE IF NOT EXISTS parents (
     name TEXT NOT NULL,
     surname TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    phone TEXT NOT NULL UNIQUE
+    phone TEXT NOT NULL UNIQUE,
+    user_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
-
-
-
 
 
 

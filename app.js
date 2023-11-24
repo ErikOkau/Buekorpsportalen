@@ -1,7 +1,8 @@
 const express = require('express');
+const app = express();
 const path = require('path');
 const bcrypt = require('bcrypt');
-const app = express();
+
 const db = require('better-sqlite3')('database.db', { verbose: console.log })
 
 app.use(express.urlencoded({ extended: true }))
@@ -9,13 +10,9 @@ app.use(express.static('public'))
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
+// path to index file
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
-})
-
-app.get('/register', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/register.html'));
 })
 
 app.get('/showDB', (req, res) => {
@@ -24,9 +21,8 @@ app.get('/showDB', (req, res) => {
   res.json(users) // Send users data as JSON
 })
 
-
 app.post('/register', (req, res) => {
-  if (req.body.name === '' || req.body.surname || req.body.email === '' || req.body.password === '') {
+  if (req.body.name === '' || req.body.surname === '' || req.body.email === '' || req.body.password === '') {
       res.send('<script>alert("Please fill in all fields"); window.location.href="/register";</script>')
   } else {
       const bcrypt = require('bcrypt')
@@ -39,16 +35,15 @@ app.post('/register', (req, res) => {
   }
 })
 
-
 app.post('/login', (req, res) => {
   const userSTMT = db.prepare('SELECT * FROM users WHERE email = ?')
   const user = userSTMT.get(req.body.email)
-
   const result = bcrypt.compareSync(req.body.password, user.password)
   
   if (user) {
       if (result) {
-          res.send('Login successful')
+        res.send('<script>alert("Login successful"); window.location.href="/login";</script>')
+          res.redirect('')
       } else if (!result){
           res.send('Wrong password')
       } else {
@@ -58,7 +53,6 @@ app.post('/login', (req, res) => {
       res.send('User not found')
   }
 })
-
 
 app.post('/deleteU', (req, res) => {
   const deleteStmt = db.prepare('DELETE FROM users WHERE email = ?')
