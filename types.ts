@@ -49,3 +49,12 @@ export interface Member_parent {
     member_id: number;
     parent_id: number;
 }
+
+
+import { SessionData } from 'express-session';
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    session: SessionData;
+  }
+}

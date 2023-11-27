@@ -22,9 +22,28 @@
                 <a href="#" class="nav-link">Foreldretabell</a>
             </li>
             <li>
+                <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
+            </li>
+            <li>
                 <a href="./login/index.html" class="nav-link login-link">Login</a>
             </li>
         </ul>
     </nav>
+
+    <script>
+         document.getElementById("logoutBtn").addEventListener("click", function(event) {
+            event.preventDefault(); // Prevent the default link behavior (redirect)
+
+            fetch('/logout', { method: 'GET' })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url; // Redirect to login page after logout
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+            });
+        });
+    </script>
 </body>
 </html>

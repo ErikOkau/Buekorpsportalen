@@ -1,11 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Members Table</title>
+  <meta charset="UTF-8">
+  <meta vieweport="width=device-width, initial-scale=1.0">
+  <title>Members Table</title>
 </head>
 <body>
-    
+  <h1>Members</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Peleton ID</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody id="membersTable">
+
+    </tbody>
+  </table>
+    <script>
+      // Fetch members data from server-side and dynamically populate the table
+      fetch('/membersData')
+        .then(response => response.json())
+        .then(members => {
+          const membersTable = document.getElementById('membersTable');
+          members.forEach(member => {
+            const row = document.createElement('tr');
+  
+            // Fill in data for each column
+            row.innerHTML = `
+              <td>${member.id}</td>
+              <td>${member.user_id}</td>
+              <td>${member.name}</td>
+              <td>${member.address}</td>
+              <td>${member.email}</td>
+              <td>${member.phone}</td>
+              <td>${member.peleton_id}</td>
+              <td><a href="/editMember?id=${member.id}">Edit</a></td>
+              <td><button onclick="deleteMember(${member.id})">Delete</button></td>
+            `;
+  
+            membersTable.appendChild(row);
+          });
+        })
+        .catch(error => console.error('Error fetching members:', error));
+  
+
+        
+      // Function to handle member deletion
+      function deleteMember(memberId) {
+        if (confirm('Are you sure you want to delete this member?')) {
+          fetch(`/deleteMember?id=${memberId}`, {
+            method: 'DELETE'
+          })
+          .then(response => {
+            if (response.ok) {
+              // Reload the page after successful deletion or handle as needed
+              window.location.reload();
+            } else {
+              throw new Error('Failed to delete member');
+            }
+          })
+          .catch(error => console.error('Error deleting member:', error));
+        }
+      }
+    </script>
 </body>
 </html>

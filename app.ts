@@ -1,28 +1,99 @@
-import express, { json } from 'express';
+import express, { json, Request, Response, NextFunction } from 'express';
+import session from 'express-session';
 import { join } from 'path';
 import Database from 'better-sqlite3';
 import { sha256 } from './utils';
 import multer from 'multer';
+import { SessionData } from 'express-session';
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    session: SessionData;
+  }
+}
 
 const app = express();
 const db = Database('database.db', { verbose: console.log });
-
-// Set up multer for file uploads
 const upload = multer({ dest: 'uploads/' });
-
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(join(__dirname, 'public')));
+app.use(session({
+  secret: 'secret123',
+  resave: false,
+  saveUninitialized: true
+}));
+
+const checkAdminLoggedIn = (req: any, res: any, next: any) => {
+  if (req.session && req.session.user && req.session.user.role === 'Admin') {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+};
+
+const checkLeaderLoggedIn = (req: any, res: any, next: any) => {
+  if (req.session && req.session.user && req.session.user.role === 'Leader') {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+}
+
+// Logout route
+app.get('/logout', (req: Request<{}, any, any, SessionData>, res: Response, next: NextFunction) => {
+  if (req.session) {
+    req.session.destroy((err: any) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        res.status(500).send('Error logging out');
+      } else {
+        res.redirect('/login'); // Redirect to the login page after successful logout
+      }
+    });
+  } else {
+    res.redirect('/login'); // Redirect to the login page if there's no active session
+  }
+});
+
+app.get('/membersData', (req, res) => {
+  const stmt = db.prepare('SELECT * FROM members');
+  const members = stmt.all();
+  res.json(members);
+});
+
+// Delete member route
+app.delete('/deleteMember', (req, res) => {
+  const memberId = req.query.id;
+  if (memberId) {
+    const deleteStmt = db.prepare('DELETE FROM members WHERE id = ?');
+    deleteStmt.run(memberId);
+    res.sendStatus(200); // Respond with success status if deletion is successful
+  } else {
+    res.status(400).send('Invalid member ID');
+  }
+});
+
+app.get('/editMember', (req, res) => {
+  const memberId = req.query.id;
+  if (memberId) {
+    const stmt = db.prepare('SELECT * FROM members WHERE id = ?');
+    const member = stmt.get(memberId);
+    res.json(member);
+  } else {
+    res.status(400).send('Invalid member ID');
+  }
+});
 
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'public/index.html'));
 });
 
-app.get('/admin', (req, res) => {
+app.get('/admin', checkAdminLoggedIn, (req, res) => {
   res.sendFile(join(__dirname, 'admin_page/index.html'));
 });
 
-app.get('/leader', (req, res) => {
+app.get('/leader', checkLeaderLoggedIn, (req, res) => {
   res.sendFile(join(__dirname, 'leader_page/index.html'));
 });
 
@@ -46,8 +117,13 @@ app.get('/admin/peleton', (req, res) => {
   res.sendFile(join(__dirname, 'admin_page/peleton/index.html'));
 });
 
+app.get('/Parent'), (req, res) => {
+  res.sendFile(join(__dirname, 'public/index.html'));
+}
 
-
+app.get('/admin/tables/members', (req, res) => {
+  res.sendFile(join(__dirname, 'admin_page/tables/members_table/index.html'));
+})
 
 app.get('/showDB', (req, res) => {
   const stmt = db.prepare('SELECT * FROM users');
@@ -66,20 +142,32 @@ app.post('/admin/register', (req, res) => {
   }
 });
 
+
+// Login route
 app.post('/login', (req, res) => {
   const userSTMT = db.prepare('SELECT * FROM users WHERE email = ?');
-  const user = userSTMT.get(req.body.email) as { email: string, password: string, role: string }
+  const user = userSTMT.get(req.body.email) as { id: number, email: string, password: string, role: string };
 
   if (user) {
-    const result = sha256(req.body.password) === user.password
+    const result = sha256(req.body.password) === user.password;
     if (result) {
-      res.redirect("/" + user.role);
-
-    } else if (!result) {
+      // Store user data in the session upon successful login
+      req.session.user = {
+        id: user.id,
+        email: user.email,
+        role: user.role
+      };
+    } else if (!user) {
       res.send('Wrong password');
     }
   } else {
     res.send('User not found');
+  }
+
+  if (req.session.user.role === 'Parent') {
+    res.redirect('/');
+  } else {
+    res.redirect('/' + req.session.user.role);
   }
 });
 
@@ -106,6 +194,10 @@ app.post('/admin/peleton', (req, res) => {
   insertStmt.run(name, companies_id);
   res.json({ message: 'Peleton added'	})
 });
+
+
+
+
 
 
 app.listen(3000, () => {
