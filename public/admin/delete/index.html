@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin page</title>
-    <link rel="stylesheet" href="../css/nav.css">
+    <title>Delete User</title>
+    <link rel="stylesheet" href="../../css/nav.css">
+    <link rel="stylesheet" href="../../css/main.css">
 </head>
 <body>
     <nav>
@@ -30,20 +31,12 @@
         </ul>
     </nav>
 
-    <script>
-         document.getElementById("logoutBtn").addEventListener("click", function(event) {
-            event.preventDefault(); // Prevent the default link behavior (redirect)
+    <form action="/deleteU" method="post">
+        <label class="email_label" type="email">Email:</label><br>
+        <input class="email_input" type="email" id="email" name="email" required><br>
+        <input class="submit" type="submit" value="deleteUser">
+    </form>
 
-            fetch('/logout', { method: 'GET' })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url; // Redirect to login page after logout
-                }
-            })
-            .catch(error => {
-                console.error('Error during logout:', error);
-            });
-        });
-    </script>
+    <script src="../../ts/main.ts" defer></script>
 </body>
 </html>

@@ -3,53 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login</title>
 
     <link rel="stylesheet" href="../css/login.css">
     <link rel="stylesheet" href="../css/nav.css">
-    <link rel="stylesheet" href="/leader_page/">
+    <link rel="stylesheet" href="../css/main.css">
+    
 </head>
-<script>
-
-// Handle the form submit event
-function handleLoginFormSubmit(event) {
-    event.preventDefault();
-
-    // Get email and password from the form
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    // Send login request
-    fetch('/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: email, password: password }),
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.message === "Login successful") {
-        switch (data.role) {
-          case 'Admin':
-            window.location.href = "/admin";
-            break;
-          case 'Leader':
-            window.location.href = "/leader";
-            break;
-          default:
-            window.location.href = "/";
-        }
-      } else {
-        window.alert(data.message);
-      }
-    });
-  }
-
-// Attach event handler to form submit event
-document.getElementById('loginForm').addEventListener('submit', handleLoginFormSubmit);
-
-</script>
 <body>
     <div class="login-container">
         <h1>Login</h1>
@@ -68,5 +28,47 @@ document.getElementById('loginForm').addEventListener('submit', handleLoginFormS
           </div>
         </form>
       </div>
+
+      <script>
+
+        // Handle the form submit event
+        function handleLoginFormSubmit(event) {
+            event.preventDefault();
+        
+            // Get email and password from the form
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+        
+            // Send login request
+            fetch('/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ email: email, password: password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.message === "Login successful") {
+                switch (data.role) {
+                  case 'Admin':
+                    window.location.href = "/admin";
+                    break;
+                  case 'Leader':
+                    window.location.href = "/leader";
+                    break;
+                  default:
+                    window.location.href = "/";
+                }
+              } else {
+                window.alert(data.message);
+              }
+            });
+          }
+        
+        // Attach event handler to form submit event
+        document.getElementById('loginForm').addEventListener('submit', handleLoginFormSubmit);
+        
+        </script>
 </body>
 </html>

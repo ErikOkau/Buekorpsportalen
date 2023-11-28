@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS companies (
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     description TEXT,
-    logo TEXT,
+    logo BLOB,
     address TEXT,
     city TEXT,
     user_id INTEGER,

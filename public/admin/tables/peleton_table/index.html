@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta vieweport="width=device-width, initial-scale=1.0">
+  <title>Peletons Table</title>
+  <link rel="stylesheet" href="../../css/nav.css">
+  <link rel="stylesheet" href="../../css/main.css">
+</head>
+<body>
+  <nav>
+    <ul class="animated-nav">
+        <li>
+            <a href="#" class="nav-link">Medlemstabell</a>
+        </li>
+        <li>
+            <a href="#" class="nav-link">Peletonstabell</a>
+        </li>
+        <li>
+            <a href="#" class="nav-link">Kompanitabell</a>
+        </li>
+        <li>
+            <a href="#" class="nav-link">Foreldretabell</a>
+        </li>
+        <li>
+            <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
+        </li>
+        <li>
+            <a href="./login/index.html" class="nav-link login-link">Login</a>
+        </li>
+    </ul>
+</nav>
+
+  <h1>Peletons</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Companies ID</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody id="peletonsTable">
+      <!-- Peletons data will be displayed here -->
+    </tbody>
+  </table>
+  <script src="../../ts/main.ts" defer></script>
+</body>
+</html>

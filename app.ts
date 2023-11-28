@@ -90,40 +90,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/admin', checkAdminLoggedIn, (req, res) => {
-  res.sendFile(join(__dirname, 'admin_page/index.html'));
+  res.redirect('public/admin/');
 });
 
 app.get('/leader', checkLeaderLoggedIn, (req, res) => {
-  res.sendFile(join(__dirname, 'leader_page/index.html'));
+  res.redirect('public/leader/');
 });
 
-app.get('/admin/register', (req, res) => {
-  res.sendFile(join(__dirname, 'admin_page/register/index.html'));
-});
 
-app.get('/admin/delete', (req, res) => {
-  res.sendFile(join(__dirname, 'admin_page/delete/index.html'));
-});
-
-app.get('/admin/edit', (req, res) => {
-  res.sendFile(join(__dirname, 'admin_page/edit/index.html'));
-});
-
-app.get('/admin/company', (req, res) => {
-  res.sendFile(join(__dirname, 'admin_page/company/index.html'));
-});
-
-app.get('/admin/peleton', (req, res) => {
-  res.sendFile(join(__dirname, 'admin_page/peleton/index.html'));
-});
-
-app.get('/Parent'), (req, res) => {
-  res.sendFile(join(__dirname, 'public/index.html'));
-}
-
-app.get('/admin/tables/members', (req, res) => {
-  res.sendFile(join(__dirname, 'admin_page/tables/members_table/index.html'));
-})
 
 app.get('/showDB', (req, res) => {
   const stmt = db.prepare('SELECT * FROM users');
