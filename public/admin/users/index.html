@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brukere</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/users.css">
+</head>
+
+<body>
+    <header>
+        <h1>Brukere</h1>
+    </header>
+    <div class="tables">
+         <h2>Admin</h2>
+        <div id="adminTable"></div>
+
+        <h2>Leader</h2>
+        <div id="leaderTable"></div>
+
+        <h2>Member</h2>
+        <div id="memberTable"></div>
+
+        <h2>Parent</h2>
+        <div id="parentTable"></div>
+    </div>
+   
+    <script>
+    ['admin', 'leader', 'member', 'parent'].forEach(role => {
+    fetch(`/showDB?role=${role}`)
+        .then(response => response.json())
+        .then(users => {
+        const table = document.createElement('table');
+        table.innerHTML = `
+            <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Role</th>
+            <th>Actions</th>
+            </tr>
+            ${users.map(user => `
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.name}</td>
+                <td>${user.surname}</td>
+                <td>${user.email}</td>
+                <td>${user.password}</td>
+                <td>${user.role}</td>
+                <td>
+                <button onclick="location.href='/editUser?id=${user.id}'">Edit</button>
+                <button onclick="deleteUser(${user.id})">Delete</button>
+                </td>
+            </tr>
+            `).join('')}
+        `;
+        document.getElementById(`${role}Table`).appendChild(table);
+        });
+    });
+    
+    function deleteUser(id) {
+        if (confirm('Are you sure you want to delete this user?')) {
+        fetch(`/deleteUser?id=${id}`, { method: 'DELETE' })
+            .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Error deleting user');
+            }
+            });
+        }
+    }
+    </script>
+</body>
+</html>

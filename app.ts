@@ -24,21 +24,6 @@ app.use(session({
   saveUninitialized: true
 }));
 
-const checkAdminLoggedIn = (req: any, res: any, next: any) => {
-  if (req.session && req.session.user && req.session.user.role === 'Admin') {
-    next();
-  } else {
-    res.redirect('/login');
-  }
-};
-
-const checkLeaderLoggedIn = (req: any, res: any, next: any) => {
-  if (req.session && req.session.user && req.session.user.role === 'Leader') {
-    next();
-  } else {
-    res.redirect('/login');
-  }
-}
 
 // Logout route
 app.get('/logout', (req: Request<{}, any, any, SessionData>, res: Response, next: NextFunction) => {
@@ -48,11 +33,11 @@ app.get('/logout', (req: Request<{}, any, any, SessionData>, res: Response, next
         console.error('Error destroying session:', err);
         res.status(500).send('Error logging out');
       } else {
-        res.redirect('/login'); // Redirect to the login page after successful logout
+        res.redirect('/'); // Redirect to the login page after successful logout
       }
     });
   } else {
-    res.redirect('/login'); // Redirect to the login page if there's no active session
+    res.redirect('/'); // Redirect to the login page if there's no active session
   }
 });
 
@@ -89,30 +74,31 @@ app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'public/index.html'));
 });
 
-app.get('/admin', checkAdminLoggedIn, (req, res) => {
+app.get('/admin', (req, res) => {
   res.redirect('public/admin/');
 });
 
-app.get('/leader', checkLeaderLoggedIn, (req, res) => {
+app.get('/leader', (req, res) => {
   res.redirect('public/leader/');
 });
 
 
 
 app.get('/showDB', (req, res) => {
-  const stmt = db.prepare('SELECT * FROM users');
-  const users = stmt.all();
+  const role = req.query.role;
+  const stmt = db.prepare('SELECT * FROM users WHERE role = ?');
+  const users = stmt.all(role);
   res.json(users);
 });
 
-app.post('/admin/register', (req, res) => {
+app.post('/register', (req, res) => {
   if (req.body.name === '' || req.body.surname === '' || req.body.email === '' || req.body.password === '' || req.body.role === '') {
     res.send('<script>alert("Please fill in all fields"); window.location.href="/admin/register";</script>');
   } else {
     const hash = sha256(req.body.password)
     const insertStmt = db.prepare('INSERT INTO users (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)');
     insertStmt.run(req.body.name, req.body.surname, req.body.email, hash, req.body.role);
-    res.redirect('/login');
+    res.redirect('/');
   }
 });
 
@@ -145,13 +131,26 @@ app.post('/login', (req, res) => {
   }
 });
 
-app.post('/admin/deleteU', (req, res) => {
-  const deleteStmt = db.prepare('DELETE FROM users WHERE email = ?');
-  deleteStmt.run(req.body.email);
+app.delete('/deleteUser', (req, res) => {
+  const userId = req.query.id;
+  if (userId) {
+    const deleteStmt = db.prepare('DELETE FROM users WHERE id = ?');
+    deleteStmt.run(userId);
+    res.sendStatus(200); // Respond with success status if deletion is successful
+  } else {
+    res.status(400).send('Invalid user ID');
+  }
 });
 
-app.post('/admin/edit', (req, res) => {
-  const updateStmt = db.prepare('UPDATE users SET name = ?, surname = ?, email = ?, password = ? WHERE email = ?');
+app.get('/editUser', (req, res) => {
+  const userId = req.query.id;
+  if (userId) {
+    const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
+    const user = stmt.get(userId);
+    res.json(user);
+  } else {
+    res.status(400).send('Invalid user ID');
+  }
 });
 
 app.post('/admin/company', upload.single('logo'), (req, res) => {
@@ -168,8 +167,6 @@ app.post('/admin/peleton', (req, res) => {
   insertStmt.run(name, companies_id);
   res.json({ message: 'Peleton added'	})
 });
-
-
 
 
 

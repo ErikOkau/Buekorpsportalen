@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete User</title>
-    <link rel="stylesheet" href="../../css/nav.css">
-    <link rel="stylesheet" href="../../css/main.css">
+    <title>Medlemsportal</title>
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
     <nav>
@@ -26,17 +26,10 @@
                 <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
             </li>
             <li>
-                <a href="./login/index.html" class="nav-link login-link">Login</a>
+                <a href="../index.html" class="nav-link login-link">Login</a>
             </li>
         </ul>
     </nav>
-
-    <form action="/deleteU" method="post">
-        <label class="email_label" type="email">Email:</label><br>
-        <input class="email_input" type="email" id="email" name="email" required><br>
-        <input class="submit" type="submit" value="deleteUser">
-    </form>
-
     <script src="../../ts/main.ts" defer></script>
 </body>
 </html>
