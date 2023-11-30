@@ -1,70 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peleton</title>
-    <link rel="stylesheet" href="../../css/nav.css">
-    <link rel="stylesheet" href="../../css/main.css">
+  <meta charset="UTF-8">
+  <meta vieweport="width=device-width, initial-scale=1.0">
+  <title>Peletons Table</title>
+  <link rel="stylesheet" href="../../css/nav.css">
+  <link rel="stylesheet" href="../../css/main.css">
 </head>
-<style>
-    
-</style>
 <body>
-    <nav>
-        <ul class="animated-nav">
-            <li>
-                <a href="#" class="nav-link">Medlemstabell</a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">Peletonstabell</a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">Kompanitabell</a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">Foreldretabell</a>
-            </li>
-            <li>
-                <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
-            </li>
-            <li>
-                <a href="./login/index.html" class="nav-link login-link">Login</a>
-            </li>
-        </ul>
-    </nav>
+  <nav>
+    <ul class="animated-nav">
+        <li>
+            <a href="../index.html" class="nav-link">Admin Dashboard</a>
+        </li>
+        <li>
+            <a href="../users/foreldre.html" class="nav-link">Foreldre</a>
+        </li>
+        <li>
+            <a href="../users/" class="nav-link">Brukere</a>
+        </li>
+        <li>
+            <a href="../companies/" class="nav-link">Kompanier</a>
+        </li>
+        <li>
+            <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
+        </li>
+    </ul>
+</nav>
 
-    <form id="peletonForm" action="/admin/peleton" method="POST">
-        <label for="name">Peleton Name:</label>
-        <input type="text" id="name" name="name" required>
-
-        <label for="companies_id">Companies ID:</label>
-        <input type="text" id="companies_id" name="companies_id" required>
-
-
-        <input class="btn" type="submit" value="Add Peleton">
-    </form>
-
-    <script>
-        document.getElementById('peletonForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const name = document.getElementById('name').value;
-            const companies_id = document.getElementById('companies_id').value;
-
-            fetch('/admin/peleton', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: name, companies_id: companies_id}),
-            })
-
-            .then(response => response.json())  
-            .then(data => {
-                alert(data.message);
-            });
-        });
-    </script>
-    <script src="../../ts/main.ts" defer></script>
+  <h1>Peletons</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Companies ID</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody id="peletonsTable">
+      <!-- Peletons data will be displayed here -->
+    </tbody>
+  </table>
+  <script src="../../ts/main.ts" defer></script>
 </body>
 </html>

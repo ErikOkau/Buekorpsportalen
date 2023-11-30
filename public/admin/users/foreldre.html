@@ -30,21 +30,14 @@
         </ul>
     </nav>
     <header>
-        <h1>Liste over brukere</h1>
+        <h1>Liste over foreldre</h1>
     </header>
     <div class="tables">
-         <h2>Admins</h2>
-        <div id="adminTable"></div>
-
-        <h2>Ledere</h2>
-        <div id="leaderTable"></div>
-
-        <h2>Medlemmer</h2>
-        <div id="memberTable"></div>
+        <div id="parentTable"></div>
     </div>
    
     <script>
-    ['admin', 'leader', 'member'].forEach(role => {
+    ['parent'].forEach(role => {
     fetch(`/showDB?role=${role}`)
         .then(response => response.json())
         .then(users => {
@@ -52,11 +45,12 @@
         table.innerHTML = `
             <tr>
             <th>ID</th>
-            <th>Navn</th>
+            <th>navn</th>
             <th>Etternavn</th>
             <th>Email</th>
             <th>Passord</th>
             <th>Rolle</th>
+            <th>Barn</th>
             <th>Handlinger</th>
             </tr>
             ${users.map(user => `

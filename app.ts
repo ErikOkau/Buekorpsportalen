@@ -131,6 +131,7 @@ app.post('/login', (req, res) => {
   }
 });
 
+
 app.delete('/deleteUser', (req, res) => {
   const userId = req.query.id;
   if (userId) {
@@ -147,7 +148,29 @@ app.get('/editUser', (req, res) => {
   if (userId) {
     const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
     const user = stmt.get(userId);
+    res.redirect('/admin/edit/?id=' + userId);
+  } else {
+    res.status(400).send('Invalid user ID');
+  }
+});
+
+app.get('/getUser', (req, res) => {
+  const userId = req.query.id;
+  if (userId) {
+    const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
+    const user = stmt.get(userId);
     res.json(user);
+  } else {
+    res.status(400).send('Invalid user ID');
+  }
+});
+
+app.put('/updateUser', (req, res) => {
+  const userId = req.query.id;
+  if (userId) {
+    const updateStmt = db.prepare('UPDATE users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id = ?');
+    updateStmt.run(req.body.name, req.body.surname, req.body.email, req.body.password, req.body.role, userId);
+    res.sendStatus(200); // Respond with success status if update is successful
   } else {
     res.status(400).send('Invalid user ID');
   }
@@ -160,6 +183,7 @@ app.post('/admin/company', upload.single('logo'), (req, res) => {
   insertStmt.run(name, description, logo, address, city);
   res.json({ message: 'Company added'	})
 });
+
 
 app.post('/admin/peleton', (req, res) => {
   const { name, companies_id } = req.body;
