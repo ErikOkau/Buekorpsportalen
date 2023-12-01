@@ -117,17 +117,17 @@ app.post('/login', (req, res) => {
         email: user.email,
         role: user.role
       };
+
+      if (req.session.user.role === 'parent') {
+        res.redirect('/member');
+      } else {
+        res.redirect('/' + req.session.user.role);
+      }
     } else if (!user) {
       res.send('Wrong password');
     }
   } else {
     res.send('User not found');
-  }
-
-  if (req.session.user.role === 'Parent') {
-    res.redirect('/');
-  } else {
-    res.redirect('/' + req.session.user.role);
   }
 });
 
