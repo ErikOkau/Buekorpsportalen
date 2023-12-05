@@ -1,79 +1,150 @@
+.tables {
+    margin-top: 0.5rem;
+    background-color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tables h1 {
+    color: #fff;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    margin-top: 4rem;
+    text-align: center;
+  }
+
+.tables h2 {
+    color: #fff;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    margin-top: 4rem;
+    text-align: center;
+}
 
 table {
-    margin-top: 1rem;
     width: 100%;
     border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 2rem;
+    table-layout: fixed;
 }
-th, td {
-    border: 1px solid #ddd;
-    padding: 1rem;
-}
-th {
-    background-color: #f2f2f2;
+
+table th,
+table td {
+    padding: 0.5rem;
     text-align: left;
+    border-bottom: 1px solid #ccc;
+    vertical-align: middle;
 }
 
-header {
-    margin-top: 3rem;
-    text-align: center;
-    font-size: 1rem;
-    color: black;
+table th {
+    background-color: #ff4081;
+    color: #fff;
 }
 
-#adminTable, #leaderTable, #memberTable, #parentTable {
-    background-color: #ccc;
+/* Buttons in table */
+.edit_btn,
+.delete_btn {
+    padding: 0.3rem 0.7rem;
+    margin-right: 0.5rem;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
 }
-
-th {
-    width: 10%;
-    background-color: #4C4B57;
-    color: white;
-    padding: 1rem;
-}
-
-.tables > h2 {
-    margin-top: 2rem;
-    text-align: center;
-    font-size: 2rem;
-    color: #ccc;
-    margin-bottom: 0;
-}
-
-td {
-    text-align: left;
-    font-size: 1rem;
-    color: black;
-    font-weight: bold;
-    background-color: #f2f2f2;
-    padding: 1rem;
-    border: 1px solid #ccc;
-}
-
-h1 {
-    color: #ccc;
-    font-size: 3rem;
-    margin-top: 4rem;
-    margin-bottom: 5rem
-}
-
-
 
 .edit_btn {
-    background-color: greenyellow;
-    border: none;
-    padding: 0.5rem 1rem 0.5rem 1rem;
-    border-radius: 10px;
-    color: black;
-    font-weight: bold;
-    cursor: pointer;
+    background-color: black;
+    color: #fff;
 }
 
 .delete_btn {
-    background-color: red;
-    border: none;
-    padding: 0.5rem 1rem 0.5rem 1rem;
-    border-radius: 10px;
-    color: black;
-    font-weight: bold;
-    cursor: pointer;
+    background-color:#ff4081;
+    color: #fff;
+}
+
+.edit_btn:hover,
+.delete_btn:hover {
+    background-color: #555;
+}
+
+/* Navigation */
+nav {
+    background-color: #333;
+    padding: 1rem 0;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+    background-color: #555;
+}
+
+/* Animations */
+.animated-nav {
+    animation: fadeIn 1s ease-in-out;
+}
+
+header h1 {
+    color: #fff;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    margin-top: 5rem;
+
+}
+
+table th.id,
+table td.id {
+    width: 5%;
+}
+
+table th.name,
+table td.name {
+    width: 10%;
+}
+
+table th.email,
+table td.email {
+    width: 15%;
+}
+
+table th.surname,
+table td.surname {
+    width: 10%;
+}
+
+table th.password,
+table td.password {
+    width: 33%;
+}
+
+table th.role,
+table td.role {
+    width: 10%;
+}
+
+table th.actions,
+table td.actions {
+    width: 10%;
+}
+
+table th.child,
+table td.child {
+    width: 7%;
+}
+
+h1 {
+    margin-top: 5rem;
+    text-align: center;
+    font-size: 2rem;
+    color: #fff;
 }

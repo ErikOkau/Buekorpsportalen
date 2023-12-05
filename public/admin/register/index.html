@@ -6,40 +6,57 @@
     <title>Register</title>
     <link rel="stylesheet" href="../../css/register.css">
     <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/nav.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
 </head>
 <body>
-    <div class="register-container">
-        <h1>Create user</h1>
-        <form action="/register" method="POST">
-            <div class="form-group">
-                <label id="remove_bg" for="name">Name:</label>
-                <input type="text" name="name" id="name" required>
+    <nav>
+        <ul class="animated-nav">
+            <li>
+                <a href="../index.html" class="nav-link">Admin Dashboard</a>
+            </li>
+            <li>
+                <a href="../users/foreldre.html" class="nav-link">Foreldre</a>
+            </li>
+            <li>
+                <a href="../users/" class="nav-link">Brukere</a>
+            </li>
+            <li>
+                <a href="../companies/" class="nav-link">Kompanier</a>
+            </li>
+            <li>
+                <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
+            </li>
+        </ul>
+    </nav>
+
+    <header>
+        <h1>Opprett</h1>
+    </header>
+    <div class="dashboard">
+        <div class="containers">
+            <div class="users_container">
+                <a href="../register/account/">
+                    <h2>Brukere</h2>
+                    <img src="../../images/plus_sign.svg" alt="user">
+                </a>
             </div>
-            <div class="form-group">
-                <label id="remove_bg" for="surname">Surname:</label>
-                <input type="text" name="surname" id="surname" required>
+            <div class="companies_container">
+                <a href="../register/peleton/">
+                    <h2>Peleton</h2>
+                    <img src="../../images/plus_sign.svg" alt="company">
+                </a>
             </div>
-            <div class="form-group">
-                <label id="remove_bg" for="email">Email:</label>
-                <input type="email" name="email" id="email" required>
+            <div class="create_container">
+                <a href="../register/company/">
+                    <h2>Kompani</h2>
+                    <img src="../../images/plus_sign.svg" alt="add">
+                </a>
             </div>
-            <div class="form-group">
-                <label id="remove_bg" for="password">Password:</label>
-                <input type="password" name="password" id="password" required>
-            </div>
-            <div class="form-group">
-                <label id="remove_bg" for="role">Role:</label>
-                <select class="dropdown-content" name="role" id="role" required>
-                    <option value="" id="remove_bg">Choose Role</option>
-                    <option value="member" id="remove_bg">Member</option>
-                    <option value="parent" id="remove_bg">Parent</option>
-                    <option value="leader" id="remove_bg">Leader</option>
-                    <option value="admin" id="remove_bg">Admin</option>
-                </select>
-            </div>
-            
-            <input class="btn" type="submit" value="Register user">
-        </form>
+        </div>
     </div>
+
+
+
 </body>
 </html>

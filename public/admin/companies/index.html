@@ -15,9 +15,6 @@
             <a href="../index.html" class="nav-link">Admin Dashboard</a>
         </li>
         <li>
-            <a href="../users/foreldre.html" class="nav-link">Foreldre</a>
-        </li>
-        <li>
             <a href="../users/" class="nav-link">Brukere</a>
         </li>
         <li>
@@ -30,23 +27,61 @@
 </nav>
 
   <h1>Companies</h1>
-  <table border="1">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Logo</th>
-        <th>Address</th>
-        <th>City</th>
-        <th>Edit</th>
-        <th>Delete</th>
-      </tr>
-    </thead>
-    <tbody id="companiesTable">
-      <!-- Companies data will be displayed here -->
-    </tbody>
-  </table>
-  <script src="../../ts/main.ts" defer></script>
+  <div class="tables">
+    <div id="companiesTable"></div>
+  </div>
+
+  <script>
+    async function fetchCompanies() {
+      try {
+        const response = await fetch('/admin/showCompanies'); // Fetch companies from backend
+        const companies = await response.json();
+
+        const companiesTable = document.getElementById('companiesTable');
+
+        companies.forEach(company => {
+          const table = document.createElement('table');
+          table.innerHTML = `
+            <thead>
+              <tr>
+                <th class="id">ID</th>
+                <th class="name">Name</th>
+                <th>Description</th>
+                <th>Logo</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="id">${company.id}</td>
+                <td class="name">${company.name}</td>
+                <td class="surname">${company.description}</td>
+                <td class="email">${company.logo}</td>
+                <td class="role">${company.address}</td>
+                <td class="actions">${company.city}</td>
+                <td class="actions">
+                <button class="edit_btn" onclick="location.href='/editUser?id=${company.id}'">Edit</button>
+                <button class="delete_btn" onclick="deleteCompany(${company.id})">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          `;
+          companiesTable.appendChild(table);
+        });
+      } catch (error) {
+        console.error('Error fetching companies:', error);
+      }
+    }
+
+    // Function to delete a company (to be implemented)
+    function deleteCompany(companyId) {
+      console.log('Delete company with ID:', companyId);
+      // Implement delete logic here (make a request to delete the company based on the ID)
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchCompanies);
+  </script>
 </body>
 </html>

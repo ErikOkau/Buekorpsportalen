@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Peleton</title>
-    <link rel="stylesheet" href="../../css/nav.css">
-    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../../css/nav.css">
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="../../../css/companies.css">
 </head>
 <style>
     
@@ -14,22 +15,16 @@
     <nav>
         <ul class="animated-nav">
             <li>
-                <a href="#" class="nav-link">Medlemstabell</a>
+                <a href="../../index.html" class="nav-link">Admin Dashboard</a>
             </li>
             <li>
-                <a href="#" class="nav-link">Peletonstabell</a>
+                <a href="../../users/" class="nav-link">Brukere</a>
             </li>
             <li>
-                <a href="#" class="nav-link">Kompanitabell</a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">Foreldretabell</a>
+                <a href="../../companies/" class="nav-link">Kompanier</a>
             </li>
             <li>
                 <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
-            </li>
-            <li>
-                <a href="./login/index.html" class="nav-link login-link">Login</a>
             </li>
         </ul>
     </nav>
@@ -38,14 +33,31 @@
         <label for="name">Peleton Name:</label>
         <input type="text" id="name" name="name" required>
 
-        <label for="companies_id">Companies ID:</label>
-        <input type="text" id="companies_id" name="companies_id" required>
-
+        <label for="companies_id">Select Company:</label>
+        <select id="companies_id" name="companies_id" required>
+            <!-- Dropdown options will be populated dynamically -->
+        </select>
 
         <input class="btn" type="submit" value="Add Peleton">
     </form>
 
     <script>
+        // Fetch existing companies and populate the dropdown
+        fetch('/admin/companies')
+            .then(response => response.json())
+            .then(data => {
+                const companiesDropdown = document.getElementById('companies_id');
+
+                // Iterate through each company and create an option for the dropdown
+                data.forEach(company => {
+                    const option = document.createElement('option');
+                    option.value = company.id;
+                    option.textContent = company.name;
+                    companiesDropdown.appendChild(option);
+                });
+            });
+
+        // Add event listener to the form
         document.getElementById('peletonForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const name = document.getElementById('name').value;

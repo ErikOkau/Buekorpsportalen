@@ -16,9 +16,6 @@
                 <a href="../index.html" class="nav-link">Admin Dashboard</a>
             </li>
             <li>
-                <a href="../users/foreldre.html" class="nav-link">Foreldre</a>
-            </li>
-            <li>
                 <a href="../users/" class="nav-link">Brukere</a>
             </li>
             <li>
@@ -29,15 +26,16 @@
             </li>
         </ul>
     </nav>
-    <header>
-        <h1>Liste over brukere</h1>
-    </header>
+
     <div class="tables">
          <h2>Admins</h2>
         <div id="adminTable"></div>
 
         <h2>Ledere</h2>
         <div id="leaderTable"></div>
+
+        <h2>Foreldre</h2>
+        <div id="parentTable"></div>
 
         <h2>Medlemmer</h2>
         <div id="memberTable"></div>
@@ -51,23 +49,55 @@
         const table = document.createElement('table');
         table.innerHTML = `
             <tr>
-            <th>ID</th>
-            <th>Navn</th>
-            <th>Etternavn</th>
-            <th>Email</th>
-            <th>Passord</th>
-            <th>Rolle</th>
-            <th>Handlinger</th>
+            <th class="id">ID</th>
+            <th class="name">Navn</th>
+            <th class="surname">Etternavn</th>
+            <th class="email">Email</th>
+            <th class="role">Rolle</th>
+            <th class="actions">Handlinger</th>
             </tr>
             ${users.map(user => `
             <tr>
-                <td>${user.id}</td>
-                <td>${user.name}</td>
-                <td>${user.surname}</td>
-                <td>${user.email}</td>
-                <td>${user.password}</td>
-                <td>${user.role}</td>
-                <td>
+                <td class="id">${user.id}</td>
+                <td class="name">${user.name}</td>
+                <td class="surname">${user.surname}</td>
+                <td class="email">${user.email}</td>
+                <td class="role">${user.role}</td>
+                <td class="actions">
+                <button class="edit_btn" onclick="location.href='/editUser?id=${user.id}'">Edit</button>
+                <button class="delete_btn" onclick="deleteUser(${user.id})">Delete</button>
+                </td>
+            </tr>
+            `).join('')}
+        `;
+        document.getElementById(`${role}Table`).appendChild(table);
+        });
+    });
+
+    ['parent'].forEach(role => {
+    fetch(`/showDB?role=${role}`)
+        .then(response => response.json())
+        .then(users => {
+        const table = document.createElement('table');
+        table.innerHTML = `
+            <tr>
+            <th class="id">ID</th>
+            <th class="name">navn</th>
+            <th class="surname">Etternavn</th>
+            <th class="email">Email</th>
+            <th class="role">Rolle</th>
+            <th class="child">Barn</th>
+            <th class="actions">Handlinger</th>
+            </tr>
+            ${users.map(user => `
+            <tr>
+                <td class="id">${user.id}</td>
+                <td class="name">${user.name}</td>
+                <td class="surname">${user.surname}</td>
+                <td class="email">${user.email}</td>
+                <td class="child">${user.child}</td>
+                <td class="role">${user.user_id}</td>
+                <td class="actions">
                 <button class="edit_btn" onclick="location.href='/editUser?id=${user.id}'">Edit</button>
                 <button class="delete_btn" onclick="deleteUser(${user.id})">Delete</button>
                 </td>

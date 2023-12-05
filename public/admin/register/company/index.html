@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Company</title>
-    <link rel="stylesheet" href="../../css/register.css">
-    <link rel="stylesheet" href="../../css/nav.css">
-    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../../css/register.css">
+    <link rel="stylesheet" href="../../../css/nav.css">
+    <link rel="stylesheet" href="../../../css/main.css">
 </head>
 
 <style>
@@ -19,22 +19,16 @@
     <nav>
         <ul class="animated-nav">
             <li>
-                <a href="#" class="nav-link">Medlemstabell</a>
+                <a href="../index.html" class="nav-link">Admin Dashboard</a>
             </li>
             <li>
-                <a href="#" class="nav-link">Peletonstabell</a>
+                <a href="../../users/" class="nav-link">Brukere</a>
             </li>
             <li>
-                <a href="#" class="nav-link">Kompanitabell</a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">Foreldretabell</a>
+                <a href="../../companies/" class="nav-link">Kompanier</a>
             </li>
             <li>
                 <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
-            </li>
-            <li>
-                <a href="./login/index.html" class="nav-link login-link">Login</a>
             </li>
         </ul>
     </nav>
@@ -42,7 +36,7 @@
 
     <div class="register-container">
         <h1>Create Company</h1>
-        <form id="companyForm">
+        <form id="companyForm" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name" id="remove_bg">Company Name:</label>
                 <input type="text" id="name" name="name" required>
@@ -88,6 +82,30 @@
             }
 
             reader.readAsDataURL(data.logo)
+
+            // Perform a fetch request to submit form data to the server
+            try {
+                const res = await fetch('/admin/company', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!res.ok) {
+                    throw new Error('Failed to create company');
+                }
+
+                const result = await res.json();
+                // Optionally, handle the result if needed
+
+                // Redirect to another page or show a success message upon successful company creation
+                alert('Company added successfully');
+                // Redirect to a page, for example:
+                window.location.href = '/admin/companies'; // Redirect to the companies listing page
+            } catch (error) {
+                console.error('Error creating company:', error);
+                // Handle errors, show an alert, or take appropriate action
+                alert('Failed to create company. Please try again.');
+            }
 
             /* const res = await fetch('/admin/company', {
                 method: 'POST',

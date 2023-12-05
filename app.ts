@@ -12,9 +12,12 @@ declare module 'express-serve-static-core' {
   }
 }
 
+
+
 const app = express();
 const db = Database('database.db', { verbose: console.log });
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: 'public/uploads/' }); 
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(join(__dirname, 'public')));
@@ -127,7 +130,7 @@ app.post('/login', (req, res) => {
       res.send('Wrong password');
     }
   } else {
-    res.send('User not found');
+    res.redirect('/');
   }
 });
 
@@ -178,7 +181,7 @@ app.put('/updateUser', (req, res) => {
 
 app.post('/admin/company', upload.single('logo'), (req, res) => {
   const { name, description, address, city } = req.body;
-  const logo = req.file ? req.file.path : null; // Get the path of the uploaded file
+  const logo = req.file ? req.file.filename : null; // Get the path of the uploaded file
   const insertStmt = db.prepare('INSERT INTO companies (name, description, logo, address, city) VALUES (?, ?, ?, ?, ?)');
   insertStmt.run(name, description, logo, address, city);
   res.json({ message: 'Company added'	})
@@ -192,6 +195,20 @@ app.post('/admin/peleton', (req, res) => {
   res.json({ message: 'Peleton added'	})
 });
 
+// Endpoint to retrieve existing companies
+app.get('/admin/companies', (req, res) => {
+  const stmt = db.prepare('SELECT id, name FROM companies');
+  const companies = stmt.all();
+  res.json(companies);
+});
+
+
+// Endpoint to fetch all companies
+app.get('/admin/showCompanies', (req, res) => {
+  const stmt = db.prepare('SELECT * FROM companies');
+  const companies = stmt.all();
+  res.json(companies);
+});
 
 
 

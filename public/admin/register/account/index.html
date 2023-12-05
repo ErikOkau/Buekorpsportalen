@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="stylesheet" href="../../../css/create_account.css">
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="../../../css/nav.css">
+</head>
+<style>
+    .register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5%;
+    animation: slideIn 1s ease-in-out;
+}
+
+h1 {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    width: 100%;
+    background-color: white;
+}
+
+label {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.btn {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    background-color: #ff4081;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: background-color 0.5s ease-in-out;
+}
+
+.btn:hover {
+    background-color: #333;
+}
+
+#remove_bg, #password, #email, #name, #surname{
+    background-color: white;
+}
+
+@keyframes fadeIn {
+    from {
+            opacity: 0;
+    }
+
+    to {
+            opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+            transform: translateX(-100%);
+    }
+
+    to {
+            transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+            transform: scale(1);
+    }
+
+    50% {
+            transform: scale(1.1);
+    }
+
+    100% {
+            transform: scale(1);
+    }
+}
+
+.dropdown-content {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    background-color: white;
+}
+
+textarea {
+    resize: none;
+    width: 104%;
+    height: 5rem;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    border: none;
+  }
+</style>
+<body>
+    <nav>
+        <ul class="animated-nav">
+            <li>
+                <a href="../index.html" class="nav-link">Admin Dashboard</a>
+            </li>
+            <li>
+                <a href="../../users/" class="nav-link">Brukere</a>
+            </li>
+            <li>
+                <a href="../../companies/" class="nav-link">Kompanier</a>
+            </li>
+            <li>
+                <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="register-container">
+        <h1>Create user</h1>
+        <form action="/register" method="POST">
+            <div class="form-group">
+                <label id="remove_bg" for="name">Name:</label>
+                <input type="text" name="name" id="name" required>
+            </div>
+            <div class="form-group">
+                <label id="remove_bg" for="surname">Surname:</label>
+                <input type="text" name="surname" id="surname" required>
+            </div>
+            <div class="form-group">
+                <label id="remove_bg" for="email">Email:</label>
+                <input type="email" name="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label id="remove_bg" for="password">Password:</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+            <div class="form-group">
+                <label id="remove_bg" for="role">Role:</label>
+                <select class="dropdown-content" name="role" id="role" required>
+                    <option value="" id="remove_bg">Choose Role</option>
+                    <option value="member" id="remove_bg">Member</option>
+                    <option value="parent" id="remove_bg">Parent</option>
+                    <option value="leader" id="remove_bg">Leader</option>
+                    <option value="admin" id="remove_bg">Admin</option>
+                </select>
+            </div>
+            
+            <input class="btn" type="submit" value="Register user">
+        </form>
+    </div>
+</body>
+</html>
