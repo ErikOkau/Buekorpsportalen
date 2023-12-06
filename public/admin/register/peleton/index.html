@@ -42,40 +42,25 @@
     </form>
 
     <script>
-        // Fetch existing companies and populate the dropdown
-        fetch('/admin/companies')
-            .then(response => response.json())
-            .then(data => {
+        async function fetchCompanies() {
+            try {
+                const response = await fetch('/admin/showCompanies'); // Fetch companies from backend
+                const companies = await response.json();
+
                 const companiesDropdown = document.getElementById('companies_id');
 
-                // Iterate through each company and create an option for the dropdown
-                data.forEach(company => {
+                companies.forEach(company => {
                     const option = document.createElement('option');
                     option.value = company.id;
                     option.textContent = company.name;
                     companiesDropdown.appendChild(option);
                 });
-            });
+            } catch (error) {
+                console.error('Error fetching companies:', error);
+            }
+        }
 
-        // Add event listener to the form
-        document.getElementById('peletonForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const name = document.getElementById('name').value;
-            const companies_id = document.getElementById('companies_id').value;
-
-            fetch('/admin/peleton', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: name, companies_id: companies_id}),
-            })
-
-            .then(response => response.json())  
-            .then(data => {
-                alert(data.message);
-            });
-        });
+    document.addEventListener('DOMContentLoaded', fetchCompanies);
     </script>
     <script src="../../ts/main.ts" defer></script>
 </body>

@@ -179,8 +179,102 @@ textarea {
                     <option value="admin" id="remove_bg">Admin</option>
                 </select>
             </div>
+            <div class="form-group" id="peletonCheckbox">
+                <label for="assignPeleton">Assign to Peleton</label>
+                <input type="checkbox" name="assignPeleton" id="assignPeleton">
+            </div>
+            <div class="form-group" id="parentCheckbox">
+                <label for="assignParent">Assign to Child</label>
+                <input type="checkbox" name="assignParent" id="assignParent">
+            </div>
+
+
+            <!-- Dropdowns that is hidden unless matched checkbox is checked -->
+            <div class="form-group" id="peletonDropdown" style="display: none;">
+                <label for="peleton">Choose Peleton:</label>
+                <select class="dropdown-content" name="peleton" id="peleton">
+                    <option value="" id="remove_bg">Choose Peleton</option>
+                    <!-- Options populated dynamically -->
+                </select>
+            </div>
+            <div class="form-group" id="parentDropdown" style="display: none;">
+                <label for="parent">Choose Parent:</label>
+                <select class="dropdown-content" name="parent" id="parent">
+                    <option value="" id="remove_bg">Choose Parent</option>
+                    <!-- Options populated dynamically -->
+                </select>
+            </div>
+            
             <input class="btn" type="submit" value="Register user">
         </form>
     </div>
+
+    <script>
+        // Show peleton dropdown if checkbox is checked
+        document.getElementById('assignPeleton').addEventListener('change', async function () {
+            const assignPeleton = document.getElementById('assignPeleton');
+
+            if (assignPeleton.checked) {
+                document.getElementById('peletonDropdown').style.display = 'block';
+                // Fetch and populate peleton options dynamically here
+            } else {
+                // Hide peleton dropdown if checkbox is unchecked
+                document.getElementById('peletonDropdown').style.display = 'none';
+            }
+        });
+
+        // Fetch peletons from backend and populate dropdown
+        async function fetchPeletons() {
+            try {
+                const response = await fetch('/admin/peletons'); 
+                const peletons = await response.json();
+
+                const peletonDropdown = document.getElementById('peleton');
+
+                peletons.forEach(peleton => {
+                    const option = document.createElement('option');
+                    option.value = peleton.id;
+                    option.textContent = peleton.name;
+                    peletonDropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.log('Error fetching peletons:', error);
+            }
+        }
+
+        document.getElementById('assignParent').addEventListener('change', async function () {
+            const assignParent = document.getElementById('assignParent');
+
+            if (assignParent.checked) {
+                document.getElementById('parentDropdown').style.display = 'block';
+                // Fetch and populate parent options dynamically here
+            } else {
+                // Hide parent dropdown if checkbox is unchecked
+                document.getElementById('parentDropdown').style.display = 'none';
+            }
+        });
+
+        async function fetchMembers() {
+            try {
+                const response = await fetch('/admin/showMembers'); 
+                const members = await response.json();
+
+                const parentDropdown = document.getElementById('parent');
+
+                members.forEach(member => {
+                    const option = document.createElement('option');
+                    option.value = member.id;
+                    option.textContent = member.name;
+                    parentDropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.log('Error fetching members:', error);
+            }
+        } 
+
+        // Run async function when DOM is loaded
+        document.addEventListener('DOMContentLoaded', fetchPeletons);
+        document.addEventListener('DOMContentLoaded', fetchMembers);
+    </script>
 </body>
 </html>

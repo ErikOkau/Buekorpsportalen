@@ -29,8 +29,8 @@ header {
   background-color: #343235;
   border: 1px solid #ccc;
   text-align: center;
-  width: 20rem;
-  height: 20rem;
+  width: 13rem;
+  height: 13rem;
   align-items: center;
   justify-content: center;
 }
@@ -55,8 +55,8 @@ header {
 .users_container img,
 .create_container img,
 .companies_container img {
-  width: 250px;
-  height: 250px;
+  width: 150px;
+  height: 150px;
   background-color: #ccc;
   border-radius: 50%;
   margin-bottom: 10px;

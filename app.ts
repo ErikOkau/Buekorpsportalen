@@ -94,16 +94,40 @@ app.get('/showDB', (req, res) => {
   res.json(users);
 });
 
+
 app.post('/register', (req, res) => {
   if (req.body.name === '' || req.body.surname === '' || req.body.email === '' || req.body.password === '' || req.body.role === '') {
-    res.send('<script>alert("Please fill in all fields"); window.location.href="/admin/register";</script>');
+      res.send('<script>alert("Please fill in all fields"); window.location.href="/admin/register";</script>');
   } else {
-    const hash = sha256(req.body.password)
-    const insertStmt = db.prepare('INSERT INTO users (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)');
-    insertStmt.run(req.body.name, req.body.surname, req.body.email, hash, req.body.role);
-    res.redirect('/');
+      const hash = sha256(req.body.password);
+
+      if (req.body.role === 'assign_peleton' && req.body.peleton) {
+          const insertStmt = db.prepare('INSERT INTO users (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)');
+          insertStmt.run(req.body.name, req.body.surname, req.body.email, hash, req.body.role);
+
+          // Fetch the user ID of the newly inserted user
+          const user = db.prepare('SELECT last_insert_rowid() as id').get();
+
+          if (user && typeof user === 'object' && 'id' in user) {
+              const userId = user.id as number; // Assuming 'id' is of type number
+              const assignStmt = db.prepare('INSERT INTO members (user_id, peleton_id) VALUES (?, ?)');
+              assignStmt.run(userId, req.body.peleton);
+          } else {
+              // Handle case when user retrieval fails or 'id' is missing
+              res.status(500).send('Failed to retrieve user ID or ID is missing');
+              return;
+          }
+      } else {
+          // Handle other role creations (existing code)
+          const insertStmt = db.prepare('INSERT INTO users (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)');
+          insertStmt.run(req.body.name, req.body.surname, req.body.email, hash, req.body.role);
+      }
+
+      res.redirect('/');
   }
 });
+
+
 
 
 // Login route
@@ -179,6 +203,8 @@ app.put('/updateUser', (req, res) => {
   }
 });
 
+
+
 app.post('/admin/company', upload.single('logo'), (req, res) => {
   const { name, description, address, city } = req.body;
   const logo = req.file ? req.file.filename : null; // Get the path of the uploaded file
@@ -187,13 +213,15 @@ app.post('/admin/company', upload.single('logo'), (req, res) => {
   res.json({ message: 'Company added'	})
 });
 
-
 app.post('/admin/peleton', (req, res) => {
   const { name, companies_id } = req.body;
   const insertStmt = db.prepare('INSERT INTO peleton (name, companies_id) VALUES (?, ?)');
   insertStmt.run(name, companies_id);
   res.json({ message: 'Peleton added'	})
 });
+
+
+
 
 // Endpoint to retrieve existing companies
 app.get('/admin/companies', (req, res) => {
@@ -202,12 +230,26 @@ app.get('/admin/companies', (req, res) => {
   res.json(companies);
 });
 
+// Endpoint to fetch all peletons
+app.get('/admin/peletons', (req, res) => {
+  const stmt = db.prepare('SELECT id, name, companies_id FROM peleton');
+  const peletons = stmt.all();
+  
+  res.json(peletons);
+});
 
 // Endpoint to fetch all companies
 app.get('/admin/showCompanies', (req, res) => {
   const stmt = db.prepare('SELECT * FROM companies');
   const companies = stmt.all();
   res.json(companies);
+});
+
+// Endpoint to fetch all members
+app.get('/admin/showMembers', (req, res) => {
+  const stmt = db.prepare('SELECT * FROM members');
+  const members = stmt.all();
+  res.json(members);
 });
 
 
