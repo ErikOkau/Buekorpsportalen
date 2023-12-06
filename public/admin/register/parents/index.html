@@ -151,8 +151,8 @@ textarea {
     </nav>
 
     <div class="register-container">
-        <h1>Create user</h1>
-        <form action="/register" method="POST">
+        <h1>Opprett forelder</h1>
+        <form action="/registerParent" method="POST">
             <div class="form-group">
                 <label id="remove_bg" for="name">Name:</label>
                 <input type="text" name="name" id="name" required>
@@ -170,13 +170,23 @@ textarea {
                 <input type="password" name="password" id="password" required>
             </div>
             <div class="form-group">
+                <label for="memberAddress">Address:</label>
+                <input type="text" name="memberAddress" id="memberAddress" required>
+            </div>
+            <div class="form-group">
+                <label for="memberEmail">Email:</label>
+                <input type="email" name="memberEmail" id="memberEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="memberPhone">Phone:</label>
+                <input type="text" name="memberPhone" id="memberPhone" required>
+            </div>
+            <div class="form-group">
                 <label id="remove_bg" for="role">Role:</label>
                 <select class="dropdown-content" name="role" id="role" required>
                     <option value="" id="remove_bg">Choose Role</option>
                     <option value="member" id="remove_bg">Member</option>
                     <option value="parent" id="remove_bg">Parent</option>
-                    <option value="leader" id="remove_bg">Leader</option>
-                    <option value="admin" id="remove_bg">Admin</option>
                 </select>
             </div>
             <div class="form-group" id="peletonCheckbox">
@@ -226,7 +236,7 @@ textarea {
         // Fetch peletons from backend and populate dropdown
         async function fetchPeletons() {
             try {
-                const response = await fetch('/admin/peletons'); 
+                const response = await fetch('/admin/showPeletons'); 
                 const peletons = await response.json();
 
                 const peletonDropdown = document.getElementById('peleton');

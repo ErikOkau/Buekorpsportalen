@@ -2,8 +2,8 @@
 
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
-    name TEXT,
-    surname TEXT,
+    name TEXT NOT NULL,
+    surname TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'member'
@@ -14,10 +14,11 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS members (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL UNIQUE,
-    name TEXT,
+    name TEXT NOT NULL,
+    surname TEXT NOT NULL,
     address TEXT,
-    email TEXT,
-    phone TEXT, 
+    email TEXT NOT NULL UNIQUE,
+    phone TEXT NOT NULL UNIQUE, 
     peleton_id INTEGER,
     FOREIGN KEY(peleton_id) REFERENCES peleton(id)
 );
@@ -65,3 +66,5 @@ CREATE TABLE IF NOT EXISTS member_parent (
     FOREIGN KEY(member_id) REFERENCES members(id),
     FOREIGN KEY(parent_id) REFERENCES parents(id)
 );
+
+DELETE FROM users WHERE id = 1;

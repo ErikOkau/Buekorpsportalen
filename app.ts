@@ -94,36 +94,62 @@ app.get('/showDB', (req, res) => {
   res.json(users);
 });
 
+app.post('/register', async (req, res) => {
+  const { name, surname, email, password, role } = req.body;
 
-app.post('/register', (req, res) => {
-  if (req.body.name === '' || req.body.surname === '' || req.body.email === '' || req.body.password === '' || req.body.role === '') {
-      res.send('<script>alert("Please fill in all fields"); window.location.href="/admin/register";</script>');
-  } else {
-      const hash = sha256(req.body.password);
+  const hash = sha256(password);
+  const insertStmt = db.prepare('INSERT INTO users (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)');
+  insertStmt.run(name, surname, email, hash, role);
 
-      if (req.body.role === 'assign_peleton' && req.body.peleton) {
-          const insertStmt = db.prepare('INSERT INTO users (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)');
-          insertStmt.run(req.body.name, req.body.surname, req.body.email, hash, req.body.role);
+  res.redirect('/');
+})
 
-          // Fetch the user ID of the newly inserted user
-          const user = db.prepare('SELECT last_insert_rowid() as id').get();
 
-          if (user && typeof user === 'object' && 'id' in user) {
-              const userId = user.id as number; // Assuming 'id' is of type number
-              const assignStmt = db.prepare('INSERT INTO members (user_id, peleton_id) VALUES (?, ?)');
-              assignStmt.run(userId, req.body.peleton);
-          } else {
-              // Handle case when user retrieval fails or 'id' is missing
-              res.status(500).send('Failed to retrieve user ID or ID is missing');
-              return;
-          }
-      } else {
-          // Handle other role creations (existing code)
-          const insertStmt = db.prepare('INSERT INTO users (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)');
-          insertStmt.run(req.body.name, req.body.surname, req.body.email, hash, req.body.role);
-      }
+app.post('/registerMember', async (req, res) => {
+  const { name, surname, email, password, role, memberAddress, memberPhone } = req.body;
+
+  try {
+    const hash = sha256(password);
+    const insertUserStmt = db.prepare('INSERT INTO users (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)');
+    const user = insertUserStmt.run(name, surname, email, hash, role);
+
+    if (user && user.lastInsertRowid) {
+      const userId = user.lastInsertRowid;
+
+      const insertMemberStmt = db.prepare('INSERT INTO members (user_id, name, surname, address, email, phone) VALUES (?, ?, ?, ?, ?, ?)');
+      insertMemberStmt.run(userId, name, surname, memberAddress, email, memberPhone);
 
       res.redirect('/');
+    } else {
+      res.status(500).send('Failed to create member');
+    }
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).send('Failed to create user');
+  }
+});
+
+app.post('/registerParent', async (req, res) => {
+  const { name, surname, email, password, role, phone } = req.body;
+
+  try {
+    const hash = sha256(password);
+    const insertUserStmt = db.prepare('INSERT INTO users (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)');
+    const user = insertUserStmt.run(name, surname, email, hash, role);
+
+    if (user && user.lastInsertRowid) {
+      const userId = user.lastInsertRowid;
+
+      const insertParentStmt = db.prepare('INSERT INTO parents (user_id, name, surname, email, phone) VALUES (?, ?, ?, ?, ?)');
+      insertParentStmt.run(userId, name, surname, email, phone);
+
+      res.redirect('/');
+    } else {
+      res.status(500).send('Failed to create parent');
+    }
+  } catch (error) {
+    console.error('Error creating parent:', error);
+    res.status(500).send('Failed to create parent');
   }
 });
 
@@ -217,6 +243,7 @@ app.post('/admin/peleton', (req, res) => {
   const { name, companies_id } = req.body;
   const insertStmt = db.prepare('INSERT INTO peleton (name, companies_id) VALUES (?, ?)');
   insertStmt.run(name, companies_id);
+
   res.json({ message: 'Peleton added'	})
 });
 
@@ -227,12 +254,13 @@ app.post('/admin/peleton', (req, res) => {
 app.get('/admin/companies', (req, res) => {
   const stmt = db.prepare('SELECT id, name FROM companies');
   const companies = stmt.all();
+
   res.json(companies);
 });
 
 // Endpoint to fetch all peletons
-app.get('/admin/peletons', (req, res) => {
-  const stmt = db.prepare('SELECT id, name, companies_id FROM peleton');
+app.get('/admin/showPeletons', (req, res) => {
+  const stmt = db.prepare('SELECT * FROM peleton');
   const peletons = stmt.all();
   
   res.json(peletons);
@@ -242,6 +270,7 @@ app.get('/admin/peletons', (req, res) => {
 app.get('/admin/showCompanies', (req, res) => {
   const stmt = db.prepare('SELECT * FROM companies');
   const companies = stmt.all();
+  
   res.json(companies);
 });
 
@@ -249,7 +278,15 @@ app.get('/admin/showCompanies', (req, res) => {
 app.get('/admin/showMembers', (req, res) => {
   const stmt = db.prepare('SELECT * FROM members');
   const members = stmt.all();
+
   res.json(members);
+});
+
+app.get('/admin/showParents', (req, res) => {
+  const stmt = db.prepare('SELECT * FROM parents');
+  const parents = stmt.all();
+
+  res.json(parents);
 });
 
 
