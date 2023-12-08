@@ -218,18 +218,49 @@ app.get('/getUser', (req, res) => {
   }
 });
 
-app.put('/updateUser', (req, res) => {
+
+app.put('/updateUser', async (req: Request, res: Response) => {
   const userId = req.query.id;
   if (userId) {
-    const updateStmt = db.prepare('UPDATE users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id = ?');
-    updateStmt.run(req.body.name, req.body.surname, req.body.email, req.body.password, req.body.role, userId);
+    const { userName, userSurname, userEmail, userPassword, userRole, userAddress, userPhone } = req.body;
+
+    let updateUserStmt;
+    let updateMemberStmt;
+    let updateParentStmt;
+
+    switch (userRole) {
+      case 'member':
+        updateUserStmt = db.prepare('UPDATE users SET name = ?, surname = ?, email = ?, password = ? WHERE id = ?');
+        updateUserStmt.run(userName, userSurname, userEmail, userPassword, userId);
+
+        updateMemberStmt = db.prepare('UPDATE members SET name = ?, surname = ?, address = ?, email = ?, phone = ? WHERE user_id = ?');
+        updateMemberStmt.run(userName, userSurname, userAddress, userEmail, userPhone, userId);
+        break;
+
+      case 'parent':
+        updateUserStmt = db.prepare('UPDATE users SET name = ?, surname = ?, email = ?, password = ? WHERE id = ?');
+        updateUserStmt.run(userName, userSurname, userEmail, userPassword, userId);
+
+        updateParentStmt = db.prepare('UPDATE parents SET name = ?, surname = ?, email = ?, phone = ? WHERE user_id = ?');
+        updateParentStmt.run(userName, userSurname, userEmail, userPhone, userId);
+        break;
+
+      case 'admin':
+      case 'leader':
+        updateUserStmt = db.prepare('UPDATE users SET name = ?, surname = ?, email = ?, password = ? WHERE id = ?');
+        updateUserStmt.run(userName, userSurname, userEmail, userPassword, userId);
+        break;
+
+      default:
+        // Handle other roles if needed...
+        break;
+    }
+
     res.sendStatus(200); // Respond with success status if update is successful
   } else {
     res.status(400).send('Invalid user ID');
   }
 });
-
-
 
 app.post('/admin/company', upload.single('logo'), (req, res) => {
   const { name, description, address, city } = req.body;
@@ -244,7 +275,7 @@ app.post('/admin/peleton', (req, res) => {
   const insertStmt = db.prepare('INSERT INTO peleton (name, companies_id) VALUES (?, ?)');
   insertStmt.run(name, companies_id);
 
-  res.json({ message: 'Peleton added'	})
+  res.redirect('/admin/register/peleton');
 });
 
 
@@ -289,7 +320,24 @@ app.get('/admin/showParents', (req, res) => {
   res.json(parents);
 });
 
+app.get('/admin/peletonsByCompany/:companyId', (req, res) => {
+  const companyId = req.params.companyId;
+  const stmt = db.prepare('SELECT * FROM peleton WHERE companies_id = ?');
+  const peletons = stmt.all(companyId);
+  
+  res.json(peletons);
+});
 
+app.get('/admin/deleteCompany', (req, res) => {
+  const companyId = req.query.id;
+  if (companyId) {
+    const deleteStmt = db.prepare('DELETE FROM companies WHERE id = ?');
+    deleteStmt.run(companyId);
+    res.sendStatus(200); // Respond with success status if deletion is successful
+  } else {
+    res.status(400).send('Invalid company ID');
+  }
+});
 
 app.listen(3000, () => {
   console.log('Server running on port http://localhost:3000');

@@ -3,43 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta vieweport="width=device-width, initial-scale=1.0">
-  <title>Peletons Table</title>
-  <link rel="stylesheet" href="../../css/nav.css">
-  <link rel="stylesheet" href="../../css/main.css">
+  <title>Peletons</title>
+  <link rel="stylesheet" href="../../../css/nav.css">
+  <link rel="stylesheet" href="../../../css/main.css">
 </head>
 <body>
   <nav>
     <ul class="animated-nav">
-        <li>
-            <a href="../index.html" class="nav-link">Admin Dashboard</a>
-        </li>
-        <li>
-            <a href="../users/" class="nav-link">Brukere</a>
-        </li>
-        <li>
-            <a href="../companies/" class="nav-link">Kompanier</a>
-        </li>
-        <li>
-            <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
-        </li>
+      <li>
+        <a href="../index.html" class="nav-link">Admin Dashboard</a>
+      </li>
+      <li>
+        <a href="../users/" class="nav-link">Brukere</a>
+      </li>
+      <li>
+        <a href="../companies/" class="nav-link">Kompanier</a>
+      </li>
+      <li>
+        <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
+      </li>
     </ul>
-</nav>
+  </nav>
 
   <h1>Peletons</h1>
-  <table border="1">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Companies ID</th>
-        <th>Edit</th>
-        <th>Delete</th>
-      </tr>
-    </thead>
-    <tbody id="peletonsTable">
-      <!-- Peletons data will be displayed here -->
-    </tbody>
-  </table>
-  <script src="../../ts/main.ts" defer></script>
+  <div class="peletons-list">
+    <!-- This is where the list of peletons will be displayed -->
+    <ul id="peletonsList"></ul>
+  </div>
+
+  <script>
+      async function fetchPeletonsByCompany() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const companyId = urlParams.get('companyId');
+
+        const response = await fetch(`/admin/peletonsByCompany/${companyId}`);
+        const peletons = await response.json();
+
+        const peletonsList = document.getElementById('peletonsList');
+
+        // Loop through the retrieved peletons and create list items to display them
+        peletons.forEach(peleton => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `Peleton Name: ${peleton.name}, ID: ${peleton.id}`;
+          peletonsList.appendChild(listItem);
+        });
+      } catch (error) {
+        console.error('Error fetching peletons:', error);
+      }
+    }
+
+    // Call the function when the page loads to fetch and display the peletons
+    document.addEventListener('DOMContentLoaded', fetchPeletonsByCompany);
+  </script>
 </body>
 </html>

@@ -122,15 +122,6 @@ input {
     box-shadow: 0 0 5px rgba(0,0,0,0.5);
     background-color: white;
 }
-
-textarea {
-    resize: none;
-    width: 104%;
-    height: 5rem;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    border: none;
-  }
 </style>
 <body>
     <nav>
@@ -174,38 +165,31 @@ textarea {
                 <input type="text" name="memberAddress" id="memberAddress" required>
             </div>
             <div class="form-group">
-                <label for="memberEmail">Email:</label>
-                <input type="email" name="memberEmail" id="memberEmail" required>
-            </div>
-            <div class="form-group">
                 <label for="memberPhone">Phone:</label>
                 <input type="text" name="memberPhone" id="memberPhone" required>
             </div>
             <div class="form-group">
                 <label id="remove_bg" for="role">Role:</label>
                 <select class="dropdown-content" name="role" id="role" required>
-                    <option value="" id="remove_bg">Choose Role</option>
-                    <option value="member" id="remove_bg">Member</option>
+                    <option value="" id="remove_bg">Choose role</option>
                     <option value="parent" id="remove_bg">Parent</option>
+                    <option value="leader" id="remove_bg">Leader</option>
                 </select>
             </div>
             <div class="form-group" id="peletonCheckbox">
-                <label for="assignPeleton">Assign to Peleton</label>
+                <label for="assignPeleton">Assign to peleton as leader</label>
                 <input type="checkbox" name="assignPeleton" id="assignPeleton">
             </div>
-            <div class="form-group" id="memberCheckbox">
-                <label for="assignMember">Assign to Child</label>
-                <input type="checkbox" name="assignMember" id="assignMember">
-            </div>
-
-
-            <!-- Dropdowns that is hidden unless matched checkbox is checked -->
             <div class="form-group" id="peletonDropdown" style="display: none;">
                 <label for="peleton">Choose Peleton:</label>
                 <select class="dropdown-content" name="peleton" id="peleton">
                     <option value="" id="remove_bg">Choose Peleton</option>
                     <!-- Options populated dynamically -->
                 </select>
+            </div>
+            <div class="form-group" id="memberCheckbox">
+                <label for="assignMember">Assign to Child</label>
+                <input type="checkbox" name="assignMember" id="assignMember">
             </div>
             <div class="form-group" id="memberDropdown" style="display: none;">
                 <label for="member">Choose Member:</label>
@@ -230,6 +214,20 @@ textarea {
             } else {
                 // Hide peleton dropdown if checkbox is unchecked
                 document.getElementById('peletonDropdown').style.display = 'none';
+            }
+        });
+
+        // Hide peletonCheckbox by default
+        document.getElementById('peletonCheckbox').style.display = 'none';
+
+        // Show peletonCheckbox if role is leader
+        document.getElementById('role').addEventListener('change', async function () {
+            const role = document.getElementById('role');
+
+            if (role.value === 'leader') {
+                document.getElementById('peletonCheckbox').style.display = 'block';
+            } else {
+                document.getElementById('peletonCheckbox').style.display = 'none';
             }
         });
 

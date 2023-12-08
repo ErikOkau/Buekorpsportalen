@@ -5,11 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit User</title>
-    <link rel="stylesheet" href="../../../css/main.css">
-    <link rel="stylesheet" href="../../../css/edit.css">
-    <link rel="stylesheet" href="../../../css/nav.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/edit.css">
+    <link rel="stylesheet" href="../../css/nav.css">
 </head>
 <body>
+
+    <nav>
+        <ul class="animated-nav">
+            <li>
+                <a href="./index.html" class="nav-link">Admin Dashboard</a>
+            </li>
+            <li>
+                <a href="./users/" class="nav-link">Brukere</a>
+            </li>
+            <li>
+                <a href="./companies/" class="nav-link">Kompanier</a>
+            </li>
+            <li>
+                <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
+            </li>
+        </ul>
+    </nav>
     <header>
         <h1>Edit User</h1>
     </header>
@@ -36,11 +53,26 @@
                 <input type="password" id="userPassword" name="userPassword">
             </div>
             <div class="form-group">
+                <label for="userAddress">Address:</label>
+                <input type="text" id="userAddress" name="userAddress">
+            </div>     
+            <div class="form-group">
+                <label for="userPhone">Phone:</label>
+                <input type="text" id="userPhone" name="userPhone">
+            </div>
+            <div class="form-group">
                 <label for="userRole">Role:</label>
                 <select id="userRole" name="userRole">
-                    <option value="admin">Admin</option>
-                    <option value="leader">Leader</option>
                     <option value="member">Member</option>
+                    <option value="parent">Parent</option>
+                    <option value="leader">Leader</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="dropdown-content" name="peleton" id="peleton">
+                    <option value="" id="remove_bg">Choose new peleton</option>
+                    <!-- Options populated dynamically -->
                 </select>
             </div>
             <div class="form-group">
@@ -54,20 +86,34 @@
         const urlParams = new URLSearchParams(window.location.search);
         const userId = urlParams.get('id');
 
-        // Fetch the user data and populate the form
-        fetch(`/getUser?id=${userId}`)
-            .then(response => response.json())
-            .then(user => {
-                document.getElementById('userId').value = user.id;
-                document.getElementById('userName').value = user.name;
-                document.getElementById('userSurname').value = user.surname;
-                document.getElementById('userEmail').value = user.email;
-                document.getElementById('userPassword').value = user.password;
-                document.getElementById('userRole').value = user.role;
-            });
+        // Function to fetch user data and populate the form
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch(`/getUser?id=${userId}`);
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('userId').value = user.id;
+                    document.getElementById('userName').value = user.name;
+                    document.getElementById('userSurname').value = user.surname;
+                    document.getElementById('userEmail').value = user.email;
+                    document.getElementById('userPassword').value = user.password;
+                    document.getElementById('userRole').value = user.role;
+                    // Populate new fields
+                    document.getElementById('userAddress').value = user.address || '';
+                    document.getElementById('userPhone').value = user.phone || '';
+                } else {
+                    console.error('Failed to fetch user data');
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
 
-        // Handle form submission
-        document.getElementById('editUserForm').addEventListener('submit', (event) => {
+        // Fetch user data and populate the form when the page loads
+        fetchUserData();
+
+        // Function to handle form submission
+        const handleFormSubmission = async (event) => {
             event.preventDefault();
 
             // Get the form data
@@ -79,22 +125,29 @@
                 jsonData[key] = value;
             }
 
-            // Send the updated user data to the server
-            fetch(`/updateUser?id=${userId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(jsonData)
-            })
-            .then(response => {
+            try {
+                // Send the updated user data to the server
+                const response = await fetch(`/updateUser?id=${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(jsonData)
+                });
+
                 if (response.ok) {
                     alert('User updated successfully');
                 } else {
                     alert('Error updating user');
                 }
-            });
-        });
+            } catch (error) {
+                console.error('Error updating user:', error);
+                alert('Error updating user');
+            }
+        };
+
+        // Add event listener for form submission
+        document.getElementById('editUserForm').addEventListener('submit', handleFormSubmission);
     </script>
 </body>
 </html>

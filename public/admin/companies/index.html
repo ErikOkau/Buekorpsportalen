@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta vieweport="width=device-width, initial-scale=1.0">
@@ -8,23 +9,24 @@
   <link rel="stylesheet" href="../../../css/main.css">
   <link rel="stylesheet" href="../../../css/users.css">
 </head>
+
 <body>
   <nav>
     <ul class="animated-nav">
-        <li>
-            <a href="../index.html" class="nav-link">Admin Dashboard</a>
-        </li>
-        <li>
-            <a href="../users/" class="nav-link">Brukere</a>
-        </li>
-        <li>
-            <a href="../companies/" class="nav-link">Kompanier</a>
-        </li>
-        <li>
-            <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
-        </li>
+      <li>
+        <a href="../index.html" class="nav-link">Admin Dashboard</a>
+      </li>
+      <li>
+        <a href="../users/" class="nav-link">Brukere</a>
+      </li>
+      <li>
+        <a href="../companies/" class="nav-link">Kompanier</a>
+      </li>
+      <li>
+        <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
+      </li>
     </ul>
-</nav>
+  </nav>
 
   <h1>Companies</h1>
   <div class="tables">
@@ -32,18 +34,30 @@
   </div>
 
   <script>
+
+    // Add the function to redirect to peletons page when clicking a company row
+    async function fetchPeletonsByCompany(companyId) {
+      try {
+        window.location.href = `/admin/peletonsByCompany/${companyId}`;
+      } catch (error) {
+        console.error('Error redirecting to peletons:', error);
+      }
+    }
+
+
+
+
     async function fetchCompanies() {
       try {
         const response = await fetch('/admin/showCompanies'); // Fetch companies from backend
         const companies = await response.json();
-
         const companiesTable = document.getElementById('companiesTable');
 
         companies.forEach(company => {
           const table = document.createElement('table');
           table.innerHTML = `
             <thead>
-              <tr>
+              <tr onclick="fetchPeletonsByCompany(${company.id})">
                 <th class="id">ID</th>
                 <th class="name">Name</th>
                 <th>Description</th>
@@ -54,7 +68,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr onclick="fetchPeletonsByCompany(${company.id})"> <!-- Added click event here -->
                 <td class="id">${company.id}</td>
                 <td class="name">${company.name}</td>
                 <td class="surname">${company.description}</td>
@@ -75,13 +89,24 @@
       }
     }
 
-    // Function to delete a company (to be implemented)
-    function deleteCompany(companyId) {
-      console.log('Delete company with ID:', companyId);
-      // Implement delete logic here (make a request to delete the company based on the ID)
+    async function deleteCompany(companyId) {
+      try {
+        const confirmation = confirm('Are you sure you want to delete this company?');
+        if (confirmation) {
+          await fetch(`/admin/deleteCompany/${companyId}`, {
+            method: 'DELETE'
+          });
+          // Optionally, you can refresh the page after deletion
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Error deleting company:', error);
+      }
     }
+
 
     document.addEventListener('DOMContentLoaded', fetchCompanies);
   </script>
 </body>
+
 </html>

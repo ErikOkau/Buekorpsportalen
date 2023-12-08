@@ -122,15 +122,6 @@ input {
     box-shadow: 0 0 5px rgba(0,0,0,0.5);
     background-color: white;
 }
-
-textarea {
-    resize: none;
-    width: 104%;
-    height: 5rem;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    border: none;
-  }
 </style>
 <body>
     <nav>
@@ -181,9 +172,7 @@ textarea {
             <div class="form-group">
                 <label id="remove_bg" for="role">Role:</label>
                 <select class="dropdown-content" name="role" id="role" required>
-                    <option value="" id="remove_bg">Choose Role</option>
                     <option value="member" id="remove_bg">Member</option>
-                    <option value="parent" id="remove_bg">Parent</option>
                 </select>
             </div>
 
@@ -202,7 +191,7 @@ textarea {
 
         
             <div class="form-group" id="parentCheckbox">
-                <label for="assignParent">Assign to Child</label>
+                <label for="assignParent">Assign to Parent</label>
                 <input type="checkbox" name="assignParent" id="assignParent">
             </div>
                 
@@ -264,7 +253,7 @@ textarea {
             }
         });
 
-        async function fetchMembers() {
+        async function fetchParents() {
             try {
                 const response = await fetch('/admin/showParents'); 
                 const members = await response.json();
@@ -284,7 +273,7 @@ textarea {
 
         // Run async function when DOM is loaded
         document.addEventListener('DOMContentLoaded', fetchPeletons);
-        document.addEventListener('DOMContentLoaded', fetchMembers);
+        document.addEventListener('DOMContentLoaded', fetchParents);
     </script>
 </body>
 </html>
