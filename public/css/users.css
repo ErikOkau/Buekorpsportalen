@@ -142,9 +142,19 @@ table td.child {
     width: 7%;
 }
 
+table th.parent {
+    width: 7%;
+}
+
 h1 {
     margin-top: 5rem;
     text-align: center;
     font-size: 2rem;
     color: #fff;
+}
+
+table tr:hover {
+    transition: all 0.3s ease-in-out;
+    background-color: pink;
+    
 }

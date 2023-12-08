@@ -18,7 +18,7 @@ const app = express();
 const db = Database('database.db', { verbose: console.log });
 const upload = multer({ dest: 'public/uploads/' }); 
 
-
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(join(__dirname, 'public')));
 app.use(session({
@@ -201,7 +201,7 @@ app.get('/editUser', (req, res) => {
   if (userId) {
     const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
     const user = stmt.get(userId);
-    res.redirect('/admin/edit/?id=' + userId);
+    res.redirect('/admin/edit/user/?id=' + userId);
   } else {
     res.status(400).send('Invalid user ID');
   }
@@ -250,15 +250,25 @@ app.put('/updateUser', async (req: Request, res: Response) => {
         updateUserStmt = db.prepare('UPDATE users SET name = ?, surname = ?, email = ?, password = ? WHERE id = ?');
         updateUserStmt.run(userName, userSurname, userEmail, userPassword, userId);
         break;
-
-      default:
-        // Handle other roles if needed...
-        break;
     }
 
     res.sendStatus(200); // Respond with success status if update is successful
   } else {
     res.status(400).send('Invalid user ID');
+  }
+});
+
+app.put('/updateCompany', async (req: Request, res: Response) => {
+  const companyId = req.query.id;
+  if (companyId) {
+    const { companyName, companyDescription, companyLogo, companyAddress, companyCity } = req.body;
+
+    const updateCompanyStmt = db.prepare('UPDATE companies SET name = ?, description = ?, logo = ?, address = ?, city = ?, WHERE id = ?');
+    updateCompanyStmt.run(companyName, companyDescription, companyLogo, companyAddress, companyCity, companyId);
+    
+    res.sendStatus(200); // Respond with success status if update is successful
+  } else {
+    res.status(400).send('Invalid company ID');
   }
 });
 
@@ -324,7 +334,7 @@ app.get('/admin/peletonsByCompany/:companyId', (req, res) => {
   const companyId = req.params.companyId;
   const stmt = db.prepare('SELECT * FROM peleton WHERE companies_id = ?');
   const peletons = stmt.all(companyId);
-  
+
   res.json(peletons);
 });
 

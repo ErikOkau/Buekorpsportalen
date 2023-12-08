@@ -45,8 +45,6 @@
     }
 
 
-
-
     async function fetchCompanies() {
       try {
         const response = await fetch('/admin/showCompanies'); // Fetch companies from backend
@@ -57,26 +55,26 @@
           const table = document.createElement('table');
           table.innerHTML = `
             <thead>
-              <tr onclick="fetchPeletonsByCompany(${company.id})">
+              <tr>
                 <th class="id">ID</th>
                 <th class="name">Name</th>
-                <th>Description</th>
-                <th>Logo</th>
+                <th class="descripton">Description</th>
+                <th class="logo">Logo</th>
                 <th>Address</th>
                 <th>City</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr onclick="fetchPeletonsByCompany(${company.id})"> <!-- Added click event here -->
-                <td class="id">${company.id}</td>
-                <td class="name">${company.name}</td>
-                <td class="surname">${company.description}</td>
-                <td class="email">${company.logo}</td>
-                <td class="role">${company.address}</td>
-                <td class="actions">${company.city}</td>
+              <tr> 
+                <td class="id" onclick="fetchPeletonsByCompany(${company.id})">${company.id}</td>
+                <td class="name" onclick="fetchPeletonsByCompany(${company.id})">${company.name}</td>
+                <td class="surname" onclick="fetchPeletonsByCompany(${company.id})">${company.description}</td>
+                <td class="email" onclick="fetchPeletonsByCompany(${company.id})">${company.logo}</td>
+                <td class="role" onclick="fetchPeletonsByCompany(${company.id})">${company.address}</td>
+                <td class="actions" onclick="fetchPeletonsByCompany(${company.id})">${company.city}</td>
                 <td class="actions">
-                <button class="edit_btn" onclick="location.href='/editUser?id=${company.id}'">Edit</button>
+                <button class="edit_btn" onclick="location.href='/updateCompany?id=${company.id}'">Edit</button>
                 <button class="delete_btn" onclick="deleteCompany(${company.id})">Delete</button>
                 </td>
               </tr>
@@ -96,14 +94,13 @@
           await fetch(`/admin/deleteCompany/${companyId}`, {
             method: 'DELETE'
           });
-          // Optionally, you can refresh the page after deletion
+          // refresh after deleteion
           window.location.reload();
         }
       } catch (error) {
         console.error('Error deleting company:', error);
       }
     }
-
 
     document.addEventListener('DOMContentLoaded', fetchCompanies);
   </script>

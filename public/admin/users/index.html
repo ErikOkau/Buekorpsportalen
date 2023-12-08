@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,7 +29,7 @@
     </nav>
 
     <div class="tables">
-         <h2>Admins</h2>
+        <h2>Admins</h2>
         <div id="adminTable"></div>
 
         <h2>Ledere</h2>
@@ -40,83 +41,67 @@
         <h2>Medlemmer</h2>
         <div id="memberTable"></div>
     </div>
-   
-    <script>
-    ['admin', 'leader', 'member'].forEach(role => {
-    fetch(`/showDB?role=${role}`)
-        .then(response => response.json())
-        .then(users => {
-        const table = document.createElement('table');
-        table.innerHTML = `
-            <tr>
-            <th class="id">ID</th>
-            <th class="name">Navn</th>
-            <th class="surname">Etternavn</th>
-            <th class="email">Email</th>
-            <th class="parent">Forelder</th>
-            <th class="actions">Handlinger</th>
-            </tr>
-            ${users.map(user => `
-            <tr>
-                <td class="id">${user.id}</td>
-                <td class="name">${user.name}</td>
-                <td class="surname">${user.surname}</td>
-                <td class="email">${user.email}</td>
-                <td class="actions">
-                <button class="edit_btn" onclick="location.href='/editUser?id=${user.id}'">Edit</button>
-                <button class="delete_btn" onclick="deleteUser(${user.id})">Delete</button>
-                </td>
-            </tr>
-            `).join('')}
-        `;
-        document.getElementById(`${role}Table`).appendChild(table);
-        });
-    });
 
-    ['parent'].forEach(role => {
-    fetch(`/showDB?role=${role}`)
-        .then(response => response.json())
-        .then(users => {
-        const table = document.createElement('table');
-        table.innerHTML = `
+    <script>
+        // async function to fetch data and render tables
+        async function fetchDataAndRenderTables() {
+            const roles = ['admin', 'leader', 'parent', 'member'];
+
+            for (const role of roles) {
+                const response = await fetch(`/showDB?role=${role}`);
+                const users = await response.json();
+
+                const table = document.createElement('table');
+                table.innerHTML = `
             <tr>
-            <th class="id">ID</th>
-            <th class="name">navn</th>
-            <th class="surname">Etternavn</th>
-            <th class="email">Email</th>
-            <th class="child">Barn</th>
-            <th class="actions">Handlinger</th>
+                <th class="id">ID</th>
+                <th class="name">Navn</th>
+                <th class="surname">Etternavn</th>
+                <th class="email">Email</th>
+                ${role === 'parent' ? '<th class="child">Barn</th>' : ''}
+                ${role === 'member' ? '<th class="parent">Forelder</th>' : ''}
+                <th class="actions">Handlinger</th>
             </tr>
             ${users.map(user => `
-            <tr>
-                <td class="id">${user.id}</td>
-                <td class="name">${user.name}</td>
-                <td class="surname">${user.surname}</td>
-                <td class="email">${user.email}</td>
-                <td class="child">${user.child}</td>
-                <td class="actions">
-                <button class="edit_btn" onclick="location.href='/editUser?id=${user.id}'">Edit</button>
-                <button class="delete_btn" onclick="deleteUser(${user.id})">Delete</button>
-                </td>
-            </tr>
+                <tr>
+                    <td class="id">${user.id}</td>
+                    <td class="name">${user.name}</td>
+                    <td class="surname">${user.surname}</td>
+                    <td class="email">${user.email}</td>
+                    ${role === 'parent' ? `<td class="child">${user.child}</td>` : ''}
+                    ${role === 'member' ? `<td class="parent">${user.parent}</td>` : ''}
+                    <td class="actions">
+                        <button class="edit_btn" onclick="location.href='/editUser?id=${user.id}'">Edit</button>
+                        <button class="delete_btn" onclick="deleteUser(${user.id})">Delete</button>
+                    </td>
+                </tr>
             `).join('')}
         `;
-        document.getElementById(`${role}Table`).appendChild(table);
-        });
-    });
-    
-    function deleteUser(id) {
-        if (confirm('Are you sure you want to delete this user?')) {
-        fetch(`/deleteUser?id=${id}`, { method: 'DELETE' })
-            .then(response => {
-            if (response.ok) {
-                location.reload();
-            } else {
-                alert('Error deleting user');
+                document.getElementById(`${role}Table`).appendChild(table);
             }
-            });
         }
-    }
+
+        // async function to delete user
+        async function deleteUser(id) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                try {
+                    const response = await fetch(`/deleteUser?id=${id}`, { method: 'DELETE' });
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting user');
+                    }
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                    alert('Error deleting user');
+                }
+            }
+        }
+
+        // call async function
+        fetchDataAndRenderTables();
+
     </script>
 </body>
+
 </html>
