@@ -1,173 +1,269 @@
 <body>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User</title>
-    <link rel="stylesheet" href="../../../css/main.css">
-    <link rel="stylesheet" href="../../../css/edit.css">
-    <link rel="stylesheet" href="../../../css/nav.css">
-</head>
-<body>
-    <nav>
-        <ul class="animated-nav">
-            <li>
-                <a href="../../index.html" class="nav-link">Admin Dashboard</a>
-            </li>
-            <li>
-                <a href="../../users/" class="nav-link">Brukere</a>
-            </li>
-            <li>
-                <a href="../../companies/" class="nav-link">Kompanier</a>
-            </li>
-            <li>
-                <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
-            </li>
-        </ul>
-    </nav>
-    <header>
-        <h1>Edit User</h1>
-    </header>
-    <div class="edit-form">
-        <form id="editUserForm" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="userId">ID:</label>
-                <input type="hidden" id="userId" name="userId" readonly>
-            </div>
-            <div class="form-group">
-                <label for="userName">Name:</label>
-                <input type="text" id="userName" name="userName">
-            </div>
-            <div class="form-group">
-                <label for="userSurname">Surname:</label>
-                <input type="text" id="userSurname" name="userSurname">
-            </div>
-            <div class="form-group">
-                <label for="userEmail">Email:</label>
-                <input type="email" id="userEmail" name="userEmail">
-            </div>
-            <div class="form-group">
-                <label for="userPassword">Password:</label>
-                <input type="password" id="userPassword" name="userPassword">
-            </div>
-            <div class="form-group">
-                <label for="userAddress">Address:</label>
-                <input type="text" id="userAddress" name="userAddress">
-            </div>     
-            <div class="form-group">
-                <label for="userPhone">Phone:</label>
-                <input type="text" id="userPhone" name="userPhone">
-            </div>
-            <div class="form-group">
-                <label for="userRole">Role:</label>
-                <select id="userRole" name="userRole">
-                    <option value="member">Member</option>
-                    <option value="parent">Parent</option>
-                    <option value="leader">Leader</option>
-                    <option value="admin">Admin</option>
-                </select>
-            </div>
-            <div class="form-group" id="peletonCheckbox">
-                <label for="assignPeleton">Assign to Peleton</label>
-                <input type="checkbox" name="assignPeleton" id="assignPeleton">
-            </div>
-            <!-- Dropdowns that is hidden unless matched checkbox is checked -->
-            <div class="form-group" id="peletonDropdown" style="display: none;">
-                <label for="peleton">Choose Peleton:</label>
-                <select class="dropdown-content" name="peleton" id="peleton">
-                    <option value="" id="remove_bg">Choose Peleton</option>
-                    <!-- Options populated dynamically -->
-                </select>
-            </div>
+    <!DOCTYPE html>
+    <html lang="en">
 
-        
-            <div class="form-group" id="parentCheckbox">
-                <label for="assignParent">Assign to Parent</label>
-                <input type="checkbox" name="assignParent" id="assignParent">
-            </div>
-                
-            <!-- Dropdowns that is hidden unless matched checkbox is checked -->
-            <div class="form-group" id="parentDropdown" style="display: none;">
-                <label for="parent">Choose Parent:</label>
-                <select class="dropdown-content" name="parent" id="parent">
-                    <option value="" id="remove_bg">Choose Parent</option>
-                    <!-- Options populated dynamically -->
-                </select>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="save-btn">Save</button>
-            </div>
-        </form>
-    </div>
-   
-    <script>
-        // Get the user ID from the query parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('id');
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Edit User</title>
+        <link rel="stylesheet" href="../../../css/main.css">
+        <link rel="stylesheet" href="../../../css/edit.css">
+        <link rel="stylesheet" href="../../../css/nav.css">
+    </head>
 
-        // Function to fetch user data and populate the form
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch(`/getUser?id=${userId}`);
-                if (response.ok) {
-                    const user = await response.json();
-                    document.getElementById('userId').value = user.id;
-                    document.getElementById('userName').value = user.name;
-                    document.getElementById('userSurname').value = user.surname;
-                    document.getElementById('userEmail').value = user.email;
-                    document.getElementById('userPassword').value = user.password;
-                    document.getElementById('userRole').value = user.role;
-                    // Populate new fields
-                    document.getElementById('userAddress').value = user.address || '';
-                    document.getElementById('userPhone').value = user.phone || '';
-                } else {
-                    console.error('Failed to fetch user data');
+    <body>
+        <nav>
+            <ul class="animated-nav">
+                <li>
+                    <a href="../../index.html" class="nav-link">Admin Dashboard</a>
+                </li>
+                <li>
+                    <a href="../../users/" class="nav-link">Brukere</a>
+                </li>
+                <li>
+                    <a href="../../companies/" class="nav-link">Kompanier</a>
+                </li>
+                <li>
+                    <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
+                </li>
+            </ul>
+        </nav>
+        <header>
+            <h1>Edit User</h1>
+        </header>
+        <div class="edit-form">
+            <form id="editUserForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="userId">ID:</label>
+                    <input type="text" id="userId" name="userId" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="userName">Name:</label>
+                    <input type="text" id="userName" name="userName">
+                </div>
+                <div class="form-group">
+                    <label for="userSurname">Surname:</label>
+                    <input type="text" id="userSurname" name="userSurname">
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">Email:</label>
+                    <input type="email" id="userEmail" name="userEmail">
+                </div>
+                <div class="form-group">
+                    <label for="userPassword">Password:</label>
+                    <input type="password" id="userPassword" name="userPassword">
+                </div>
+                <div class="form-group">
+                    <label for="userRole">Role:</label>
+                    <select id="userRole" name="userRole">
+                        <option value="member">Member</option>
+                        <option value="parent">Parent</option>
+                        <option value="leader">Leader</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="userAddress">Address:</label>
+                    <input type="text" id="userAddress" name="userAddress">
+                </div>
+                <div class="form-group">
+                    <label for="userPhone">Phone:</label>
+                    <input type="text" id="userPhone" name="userPhone">
+                </div>
+                <div class="form-group" id="peletonCheckbox">
+                    <label for="assignPeleton">Assign to Peleton</label>
+                    <input type="checkbox" name="assignPeleton" id="assignPeleton">
+                </div>
+                <!-- Dropdowns that is hidden unless matched checkbox is checked -->
+                <div class="form-group" id="peletonDropdown" style="display: none;">
+                    <label for="peleton">Choose Peleton:</label>
+                    <select class="dropdown-content" name="peleton" id="peleton">
+                        <option value="" id="remove_bg">Choose Peleton</option>
+                        <!-- Options populated dynamically -->
+                    </select>
+                </div>
+
+
+                <div class="form-group" id="parentCheckbox">
+                    <label for="assignParent">Assign to Parent</label>
+                    <input type="checkbox" name="assignParent" id="assignParent">
+                </div>
+
+                <!-- Dropdowns that is hidden unless matched checkbox is checked -->
+                <div class="form-group" id="parentDropdown" style="display: none;">
+                    <label for="parent">Choose Parent:</label>
+                    <select class="dropdown-content" name="parent" id="parent">
+                        <option value="" id="remove_bg">Choose Parent</option>
+                        <!-- Options populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="save-btn">Save</button>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            // Get the user ID from the query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('id');
+
+            // Function to fetch user data and populate the form
+            const fetchUserData = async () => {
+                try {
+                    const response = await fetch(`/getUser?id=${userId}`);
+                    if (response.ok) {
+                        const user = await response.json();
+                        document.getElementById('userId').value = user.id;
+                        document.getElementById('userName').value = user.name;
+                        document.getElementById('userSurname').value = user.surname;
+                        document.getElementById('userEmail').value = user.email;
+                        document.getElementById('userPassword').value = user.password;
+                        document.getElementById('userRole').value = user.role;
+                        // Populate new fields
+                        document.getElementById('userAddress').value = user.address || '';
+                        document.getElementById('userPhone').value = user.phone || '';
+                    } else {
+                        console.error('Failed to fetch user data');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
                 }
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
+            };
 
-        // Fetch user data and populate the form when the page loads
-        fetchUserData();
+            // Fetch user data and populate the form when the page loads
+            fetchUserData();
 
-        // Function to handle form submission
-        const handleFormSubmission = async (event) => {
-            event.preventDefault();
+            // Function to handle form submission
+            const handleFormSubmission = async (event) => {
+                event.preventDefault();
 
-            // Get the form data
-            const formData = new FormData(event.target);
+                // Get the form data
+                const formData = new FormData(event.target);
 
-            // Convert form data to JSON
-            const jsonData = {};
-            for (const [key, value] of formData.entries()) {
-                jsonData[key] = value;
-            }
+                // Convert form data to JSON
+                const jsonData = {};
+                for (const [key, value] of formData.entries()) {
+                    jsonData[key] = value;
+                }
 
-            try {
-                // Send the updated user data to the server
-                const response = await fetch(`/updateUser?id=${userId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(jsonData)
-                });
+                try {
+                    // Send the updated user data to the server
+                    const response = await fetch(`/updateUser?id=${userId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(jsonData)
+                    });
 
-                if (response.ok) {
-                    alert('User updated successfully');
-                } else {
+                    if (response.ok) {
+                        alert('User updated successfully');
+                    } else {
+                        alert('Error updating user');
+                    }
+                } catch (error) {
+                    console.error('Error updating user:', error);
                     alert('Error updating user');
                 }
-            } catch (error) {
-                console.error('Error updating user:', error);
-                alert('Error updating user');
-            }
-        };
+            };
 
-        // Add event listener for form submission
-        document.getElementById('editUserForm').addEventListener('submit', handleFormSubmission);
-    </script>
-</body>
-</html>
+            // Fetch peletons from backend and populate dropdown
+            async function fetchPeletons() {
+                try {
+                    const response = await fetch('/admin/showPeletons');
+                    const peletons = await response.json();
+
+                    const peletonDropdown = document.getElementById('peleton');
+
+                    // Clear existing options before adding new ones
+                    peletonDropdown.innerHTML = '';
+
+                    // Populate dropdown with updated peletons
+                    peletons.forEach(peleton => {
+                        const option = document.createElement('option');
+                        option.value = peleton.id;
+                        option.textContent = peleton.name;
+                        peletonDropdown.appendChild(option);
+                    });
+                } catch (error) {
+                    console.log('Error fetching peletons:', error);
+                }
+            }
+
+            // Fetch parents from backend and populate dropdown
+            async function fetchParents() {
+                try {
+                    const response = await fetch('/admin/showParents');
+                    const parents = await response.json();
+
+                    const parentDropdown = document.getElementById('parent');
+
+                    // Clear existing options before adding new ones
+                    parentDropdown.innerHTML = '';
+
+                    // Populate dropdown with updated parents
+                    parents.forEach(parent => {
+                        const option = document.createElement('option');
+                        option.value = parent.id;
+                        option.textContent = parent.name;
+                        parentDropdown.appendChild(option);
+                    });
+                } catch (error) {
+                    console.log('Error fetching parents:', error);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', fetchPeletons);
+            document.addEventListener('DOMContentLoaded', fetchParents);
+
+
+            // Add event listener for checkbox change
+            document.getElementById('assignPeleton').addEventListener('change', async function () {
+                const assignPeleton = document.getElementById('assignPeleton');
+
+                if (assignPeleton.checked) {
+                    document.getElementById('peletonDropdown').style.display = 'block';
+                } else {
+                    // Hide peleton dropdown if checkbox is unchecked
+                    document.getElementById('peletonDropdown').style.display = 'none';
+                }
+            });
+
+            document.getElementById('assignParent').addEventListener('change', async function () {
+                const assignParent = document.getElementById('assignParent');
+
+                if (assignParent.checked) {
+                    document.getElementById('parentDropdown').style.display = 'block';
+                } else {
+                    // Hide parent dropdown if checkbox is unchecked
+                    document.getElementById('parentDropdown').style.display = 'none';
+                }
+            });
+
+
+
+            // Add event listener for form submission
+            document.getElementById('editUserForm').addEventListener('submit', handleFormSubmission);
+
+
+            // If admin role checked, hide address, phone, assign to peleton and assign to parent
+            document.getElementById('userRole').addEventListener('change', async function () {
+                const role = document.getElementById('userRole');
+
+                if (role.value === 'admin') {
+                    document.getElementById('userAddress').style.display = 'none';
+                    document.getElementById('userPhone').style.display = 'none';
+                    document.getElementById('peletonCheckbox').style.display = 'none';
+                    document.getElementById('parentCheckbox').style.display = 'none';
+                } else {
+                    document.getElementById('userAddress').style.display = 'block';
+                    document.getElementById('userPhone').style.display = 'block';
+                    document.getElementById('peletonCheckbox').style.display = 'block';
+                    document.getElementById('parentCheckbox').style.display = 'block';
+                }
+            });
+        </script>
+    </body>
+
+    </html>

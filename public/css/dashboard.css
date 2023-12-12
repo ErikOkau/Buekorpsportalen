@@ -27,7 +27,8 @@ header {
   margin: 10px;
   padding: 20px;
   background-color: #343235;
-  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
   text-align: center;
   width: 13rem;
   height: 13rem;
@@ -47,7 +48,7 @@ header {
 .companies_container:hover {
     background-color: #4C4B57;
     color: #fff;
-    border: 1px solid #fff;
+
    
     animation: pulse 1.5s infinite;
 }
