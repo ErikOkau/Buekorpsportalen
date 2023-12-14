@@ -106,7 +106,7 @@ app.post('/register', async (req, res) => {
 
 
 app.post('/registerMember', async (req, res) => {
-  const { name, surname, email, password, role, memberAddress, memberPhone } = req.body;
+  const { name, surname, email, password, role, memberAddress, memberPhone, assignPeleton } = req.body;
 
   try {
     const hash = sha256(password);
@@ -114,14 +114,21 @@ app.post('/registerMember', async (req, res) => {
     const user = insertUserStmt.run(name, surname, email, hash, role);
 
     if (user && user.lastInsertRowid) {
-      const userId = user.lastInsertRowid;
+      const userId = user.lastInsertRowid; // Get the ID of the newly created user
+      const parentId = req.body.parent; // Get the parent ID from the request body
 
-      const insertMemberStmt = db.prepare('INSERT INTO members (user_id, name, surname, address, email, phone) VALUES (?, ?, ?, ?, ?, ?)');
-      insertMemberStmt.run(userId, name, surname, memberAddress, email, memberPhone);
+      const insertMemberStmt = db.prepare('INSERT INTO members (user_id, name, surname, address, email, phone, peleton_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
+      insertMemberStmt.run(userId, name, surname, memberAddress, email, memberPhone, assignPeleton);
+
+      if (parentId) {
+        // Assign the member to the parent in the member_parent table
+        const insertMemberParentStmt = db.prepare('INSERT INTO member_parent (member_id, parent_id) VALUES (?, ?)');
+        insertMemberParentStmt.run(userId, parentId);
+      }
 
       res.redirect('/');
     } else {
-      res.status(500).send('Failed to create member');
+        res.status(500).send('Failed to create member');
     }
   } catch (error) {
     console.error('Error creating user:', error);
@@ -130,26 +137,36 @@ app.post('/registerMember', async (req, res) => {
 });
 
 app.post('/registerParent', async (req, res) => {
-  const { name, surname, email, password, role, phone } = req.body;
+  const { name, surname, email, password, role, address, phone, assignPeleton } = req.body;
 
   try {
     const hash = sha256(password);
     const insertUserStmt = db.prepare('INSERT INTO users (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)');
     const user = insertUserStmt.run(name, surname, email, hash, role);
+    
 
     if (user && user.lastInsertRowid) {
       const userId = user.lastInsertRowid;
+      const memberId = req.body.memberId;
 
-      const insertParentStmt = db.prepare('INSERT INTO parents (user_id, name, surname, email, phone) VALUES (?, ?, ?, ?, ?)');
-      insertParentStmt.run(userId, name, surname, email, phone);
+      const insertParentStmt = db.prepare('INSERT INTO parents (user_id, name, surname, address, email, phone, peleton_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
+      const parent = insertParentStmt.run(userId, name, surname, email, address, phone, assignPeleton);
 
-      res.redirect('/');
+      // Assign the member to the parent in the member_parent table
+      const insertMemberParentStmt = db.prepare('INSERT INTO member_parent (member_id, parent_id) VALUES (?, ?)');
+      const memberParent = insertMemberParentStmt.run(memberId, parent.lastInsertRowid);
+
+      if (parent && parent.lastInsertRowid && memberParent && memberParent.lastInsertRowid) {
+        res.redirect('/');
+      } else {
+        res.status(500).send('Failed to create parent or assign member to parent');
+      }
     } else {
       res.status(500).send('Failed to create parent');
     }
   } catch (error) {
     console.error('Error creating parent:', error);
-    res.status(500).send('Failed to create parent');
+    res.status(500).send(`Failed to create parent: ${error.message}`);
   }
 });
 
@@ -348,6 +365,14 @@ app.get('/admin/deleteCompany', (req, res) => {
     res.status(400).send('Invalid company ID');
   }
 });
+
+// Endpoint to fetch users
+app.get('/admin/showUsers', (req, res) => {
+  const stmt = db.prepare('SELECT * FROM users'); 
+  const users = stmt.all();
+  res.json(users);
+});
+
 
 app.listen(3000, () => {
   console.log('Server running on port http://localhost:3000');

@@ -48,8 +48,6 @@ header {
 .companies_container:hover {
     background-color: #4C4B57;
     color: #fff;
-
-   
     animation: pulse 1.5s infinite;
 }
 

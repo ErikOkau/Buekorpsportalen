@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,119 +11,124 @@
 </head>
 <style>
     .register-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 5%;
-    animation: slideIn 1s ease-in-out;
-}
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 5%;
+        animation: slideIn 1s ease-in-out;
+    }
 
-h1 {
-    color: white;
-    font-size: 2rem;
-    margin-bottom: 2rem;
-}
+    h1 {
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
 
-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 400px;
-    padding: 2rem;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 400px;
+        padding: 2rem;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-    width: 100%;
-    background-color: white;
-}
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        width: 100%;
+        background-color: white;
+    }
 
-label {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-}
+    label {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
 
-input {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 5px;
-    border: none;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-}
+    input {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
 
-.btn {
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 1rem;
-    background-color: #ff4081;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    cursor: pointer;
-    transition: background-color 0.5s ease-in-out;
-}
+    .btn {
+        width: 100%;
+        padding: 0.5rem;
+        margin-top: 1rem;
+        background-color: #ff4081;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+        transition: background-color 0.5s ease-in-out;
+    }
 
-.btn:hover {
-    background-color: #333;
-}
+    .btn:hover {
+        background-color: #333;
+    }
 
-#remove_bg, #password, #email, #name, #surname{
-    background-color: white;
-}
+    #remove_bg,
+    #password,
+    #email,
+    #name,
+    #surname {
+        background-color: white;
+    }
 
-@keyframes fadeIn {
-    from {
+    @keyframes fadeIn {
+        from {
             opacity: 0;
-    }
+        }
 
-    to {
+        to {
             opacity: 1;
+        }
     }
-}
 
-@keyframes slideIn {
-    from {
+    @keyframes slideIn {
+        from {
             transform: translateX(-100%);
-    }
+        }
 
-    to {
+        to {
             transform: translateX(0);
+        }
     }
-}
 
-@keyframes pulse {
-    0% {
+    @keyframes pulse {
+        0% {
             transform: scale(1);
-    }
+        }
 
-    50% {
+        50% {
             transform: scale(1.1);
-    }
+        }
 
-    100% {
+        100% {
             transform: scale(1);
+        }
     }
-}
 
-.dropdown-content {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 5px;
-    border: none;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    background-color: white;
-}
+    .dropdown-content {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        background-color: white;
+    }
 </style>
+
 <body>
     <nav>
         <ul class="animated-nav">
@@ -162,18 +168,17 @@ input {
             </div>
             <div class="form-group">
                 <label for="memberAddress">Address:</label>
-                <input type="text" name="memberAddress" id="memberAddress" required>
+                <input type="text" name="address" id="memberAddress" required>
             </div>
             <div class="form-group">
                 <label for="memberPhone">Phone:</label>
-                <input type="text" name="memberPhone" id="memberPhone" required>
+                <input type="text" name="phone" id="memberPhone" required>
             </div>
             <div class="form-group">
                 <label id="remove_bg" for="role">Role:</label>
                 <select class="dropdown-content" name="role" id="role" required>
                     <option value="" id="remove_bg">Choose role</option>
                     <option value="parent" id="remove_bg">Parent</option>
-                    <option value="leader" id="remove_bg">Leader</option>
                 </select>
             </div>
             <div class="form-group" id="peletonCheckbox">
@@ -198,7 +203,11 @@ input {
                     <!-- Options populated dynamically -->
                 </select>
             </div>
-            
+
+
+            <!-- Hidden input field to capture selected members ID -->
+            <input type="hidden" name="selectedMemberId" id="selectedMemberId">
+
             <input class="btn" type="submit" value="Register user">
         </form>
     </div>
@@ -217,6 +226,7 @@ input {
             }
         });
 
+
         // Hide peletonCheckbox by default
         document.getElementById('peletonCheckbox').style.display = 'none';
 
@@ -224,7 +234,7 @@ input {
         document.getElementById('role').addEventListener('change', async function () {
             const role = document.getElementById('role');
 
-            if (role.value === 'leader') {
+            if (role.value === 'parent') {
                 document.getElementById('peletonCheckbox').style.display = 'block';
             } else {
                 document.getElementById('peletonCheckbox').style.display = 'none';
@@ -234,7 +244,7 @@ input {
         // Fetch peletons from backend and populate dropdown
         async function fetchPeletons() {
             try {
-                const response = await fetch('/admin/showPeletons'); 
+                const response = await fetch('/admin/showPeletons');
                 const peletons = await response.json();
 
                 const peletonDropdown = document.getElementById('peleton');
@@ -250,24 +260,48 @@ input {
             }
         }
 
+        let childCount = 0;
+
         document.getElementById('assignMember').addEventListener('change', async function () {
             const assignParent = document.getElementById('assignMember');
 
-            if (assignParent.checked) {
-                document.getElementById('memberDropdown').style.display = 'block';
-                // Fetch and populate parent options dynamically here
+            if (assignParent.checked && childCount < 3) {
+                const memberDropdown = document.getElementById('memberDropdown');
+                memberDropdown.style.display = 'block';
+
+                // Check if dropdown already exists for this child count
+                if (!document.getElementById(`child${childCount}`)) {
+                    // Create a new dropdown for each child
+                    const newDropdown = document.createElement('select');
+                    newDropdown.id = `child${childCount}`;
+                    newDropdown.name = `child${childCount}`;
+                    newDropdown.classList.add('dropdown-content');
+                    memberDropdown.appendChild(newDropdown);
+
+                    // Fetch and populate child options dynamically here
+                    await fetchMembers(newDropdown.id);
+
+                    childCount++;
+                }
             } else {
                 // Hide parent dropdown if checkbox is unchecked
                 document.getElementById('memberDropdown').style.display = 'none';
             }
         });
 
-        async function fetchMembers() {
+        // Update the event listener for member selection
+        document.getElementById('member').addEventListener('change', function () {
+            const selectedMemberId = document.getElementById('member').value;
+            // Set the value of the hidden input field to the selected member's ID
+            document.getElementById('selectedMemberId').value = selectedMemberId;
+        });
+
+        async function fetchMembers(dropdownId) {
             try {
-                const response = await fetch('/admin/showMembers'); 
+                const response = await fetch('/admin/showMembers');
                 const members = await response.json();
 
-                const parentDropdown = document.getElementById('member');
+                const parentDropdown = document.getElementById(dropdownId);
 
                 members.forEach(member => {
                     const option = document.createElement('option');
@@ -278,11 +312,12 @@ input {
             } catch (error) {
                 console.log('Error fetching members:', error);
             }
-        } 
+        }
 
         // Run async function when DOM is loaded
         document.addEventListener('DOMContentLoaded', fetchPeletons);
         document.addEventListener('DOMContentLoaded', fetchMembers);
     </script>
 </body>
+
 </html>

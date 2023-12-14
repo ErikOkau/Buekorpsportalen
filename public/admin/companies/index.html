@@ -62,6 +62,7 @@
                 <th class="logo">Logo</th>
                 <th>Address</th>
                 <th>City</th>
+                <th>Leader</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -73,6 +74,7 @@
                 <td class="email" onclick="fetchPeletonsByCompany(${company.id})">${company.logo}</td>
                 <td class="role" onclick="fetchPeletonsByCompany(${company.id})">${company.address}</td>
                 <td class="actions" onclick="fetchPeletonsByCompany(${company.id})">${company.city}</td>
+                <td class="actions" onclick="fetchPeletonsByCompany(${company.id})">${company.leader}</td>
                 <td class="actions">
                 <button class="edit_btn" onclick="location.href='/updateCompany?id=${company.id}'">Edit</button>
                 <button class="delete_btn" onclick="deleteCompany(${company.id})">Delete</button>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,119 +11,124 @@
 </head>
 <style>
     .register-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 5%;
-    animation: slideIn 1s ease-in-out;
-}
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 5%;
+        animation: slideIn 1s ease-in-out;
+    }
 
-h1 {
-    color: white;
-    font-size: 2rem;
-    margin-bottom: 2rem;
-}
+    h1 {
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
 
-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 400px;
-    padding: 2rem;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 400px;
+        padding: 2rem;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-    width: 100%;
-    background-color: white;
-}
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        width: 100%;
+        background-color: white;
+    }
 
-label {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-}
+    label {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
 
-input {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 5px;
-    border: none;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-}
+    input {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
 
-.btn {
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 1rem;
-    background-color: #ff4081;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    cursor: pointer;
-    transition: background-color 0.5s ease-in-out;
-}
+    .btn {
+        width: 100%;
+        padding: 0.5rem;
+        margin-top: 1rem;
+        background-color: #ff4081;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+        transition: background-color 0.5s ease-in-out;
+    }
 
-.btn:hover {
-    background-color: #333;
-}
+    .btn:hover {
+        background-color: #333;
+    }
 
-#remove_bg, #password, #email, #name, #surname{
-    background-color: white;
-}
+    #remove_bg,
+    #password,
+    #email,
+    #name,
+    #surname {
+        background-color: white;
+    }
 
-@keyframes fadeIn {
-    from {
+    @keyframes fadeIn {
+        from {
             opacity: 0;
-    }
+        }
 
-    to {
+        to {
             opacity: 1;
+        }
     }
-}
 
-@keyframes slideIn {
-    from {
+    @keyframes slideIn {
+        from {
             transform: translateX(-100%);
-    }
+        }
 
-    to {
+        to {
             transform: translateX(0);
+        }
     }
-}
 
-@keyframes pulse {
-    0% {
+    @keyframes pulse {
+        0% {
             transform: scale(1);
-    }
+        }
 
-    50% {
+        50% {
             transform: scale(1.1);
-    }
+        }
 
-    100% {
+        100% {
             transform: scale(1);
+        }
     }
-}
 
-.dropdown-content {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 5px;
-    border: none;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    background-color: white;
-}
+    .dropdown-content {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        background-color: white;
+    }
 </style>
+
 <body>
     <nav>
         <ul class="animated-nav">
@@ -189,12 +195,12 @@ input {
                 </select>
             </div>
 
-        
+
             <div class="form-group" id="parentCheckbox">
                 <label for="assignParent">Assign to Parent</label>
                 <input type="checkbox" name="assignParent" id="assignParent">
             </div>
-                
+
             <!-- Dropdowns that is hidden unless matched checkbox is checked -->
             <div class="form-group" id="parentDropdown" style="display: none;">
                 <label for="parent">Choose Parent:</label>
@@ -203,7 +209,8 @@ input {
                     <!-- Options populated dynamically -->
                 </select>
             </div>
-            
+            <input type="hidden" name="selectedParentId" id="selectedParentId">
+
             <input class="btn" type="submit" value="Register user">
         </form>
     </div>
@@ -225,7 +232,7 @@ input {
         // Fetch peletons from backend and populate dropdown
         async function fetchPeletons() {
             try {
-                const response = await fetch('/admin/showPeletons'); 
+                const response = await fetch('/admin/showPeletons');
                 const peletons = await response.json();
 
                 const peletonDropdown = document.getElementById('peleton');
@@ -253,9 +260,15 @@ input {
             }
         });
 
+        // Store the selected parent's ID in the hidden input field
+        document.getElementById('parent').addEventListener('change', function () {
+            const selectedParentId = document.getElementById('parent').value;
+            document.getElementById('selectedParentId').value = selectedParentId;
+        });
+
         async function fetchParents() {
             try {
-                const response = await fetch('/admin/showParents'); 
+                const response = await fetch('/admin/showParents');
                 const members = await response.json();
 
                 const parentDropdown = document.getElementById('parent');
@@ -269,11 +282,12 @@ input {
             } catch (error) {
                 console.log('Error fetching members:', error);
             }
-        } 
+        }
 
         // Run async function when DOM is loaded
         document.addEventListener('DOMContentLoaded', fetchPeletons);
         document.addEventListener('DOMContentLoaded', fetchParents);
     </script>
 </body>
+
 </html>

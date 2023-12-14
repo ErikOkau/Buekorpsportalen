@@ -6,7 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
     surname TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    role TEXT NOT NULL DEFAULT 'member'
+    role TEXT NOT NULL DEFAULT 'member',
+    leader_id INTEGER, 
+    FOREIGN KEY(leader_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 
@@ -20,6 +22,7 @@ CREATE TABLE IF NOT EXISTS members (
     email TEXT NOT NULL UNIQUE,
     phone TEXT NOT NULL UNIQUE, 
     peleton_id INTEGER,
+    FOREIGN KEY(user_id) REFERENCES users(id),
     FOREIGN KEY(peleton_id) REFERENCES peleton(id)
 );
 
@@ -52,19 +55,22 @@ CREATE TABLE IF NOT EXISTS parents (
     name TEXT NOT NULL,
     surname TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    phone TEXT NOT NULL UNIQUE,
+    address TEXT,
+    phone INTEGER NOT NULL UNIQUE,
     user_id INTEGER,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    peleton_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (peleton_id) REFERENCES peleton(id)
 );
 
 
 
 CREATE TABLE IF NOT EXISTS member_parent (
     id INTEGER PRIMARY KEY,
-    member_id INTEGER NOT NULL,
-    parent_id INTEGER NOT NULL,
+    member_id INTEGER,
+    parent_id INTEGER,
     FOREIGN KEY(member_id) REFERENCES members(id),
     FOREIGN KEY(parent_id) REFERENCES parents(id)
 );
 
-DELETE FROM users WHERE id = 5;
+DELETE FROM member_parent WHERE id = 1;
