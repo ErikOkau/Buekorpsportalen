@@ -73,4 +73,6 @@ CREATE TABLE IF NOT EXISTS member_parent (
     FOREIGN KEY(parent_id) REFERENCES parents(id)
 );
 
-DELETE FROM member_parent WHERE id = 1;
+DELETE FROM users WHERE id = 3;
+
+DELETE FROM members WHERE id = 2;

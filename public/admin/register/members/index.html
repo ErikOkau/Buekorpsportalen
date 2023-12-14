@@ -195,6 +195,8 @@
                 </select>
             </div>
 
+            <input type="hidden" name="peletonId" id="selectedPeletonId">
+
 
             <div class="form-group" id="parentCheckbox">
                 <label for="assignParent">Assign to Parent</label>
@@ -229,6 +231,14 @@
             }
         });
 
+        // Store the selected peleton's ID in hidden input field
+        document.getElementById('peleton').addEventListener('change', function () {
+            const selectedPeletonId = document.getElementById('peleton').value;
+
+            document.getElementById('selectedPeletonId').value = selectedPeletonId;
+        });
+
+
         // Fetch peletons from backend and populate dropdown
         async function fetchPeletons() {
             try {
@@ -253,9 +263,7 @@
 
             if (assignParent.checked) {
                 document.getElementById('parentDropdown').style.display = 'block';
-                // Fetch and populate parent options dynamically here
             } else {
-                // Hide parent dropdown if checkbox is unchecked
                 document.getElementById('parentDropdown').style.display = 'none';
             }
         });

@@ -1,35 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medlemsportal</title>
     <link rel="stylesheet" href="../css/nav.css">
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/users.css">
 </head>
+<style>
+    h1 {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+</style>
+
 <body>
     <nav>
         <ul class="animated-nav">
             <li>
-                <a href="#" class="nav-link">Medlemstabell</a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">Peletonstabell</a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">Kompanitabell</a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">Foreldretabell</a>
-            </li>
-            <li>
                 <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
-            </li>
-            <li>
-                <a href="../index.html" class="nav-link login-link">Login</a>
             </li>
         </ul>
     </nav>
+
+    <h1 id="peletonHeader"></h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Address</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="membersTableBody">
+
+        </tbody>
+    </table>
+
+
+
     <script src="../../ts/main.ts" defer></script>
 </body>
+<script>
+    window.onload = async () => {
+        try {
+            const peletonResponse = await fetch('/getPeletonName');
+            if (!peletonResponse.ok) {
+                throw new Error('Failed to fetch peleton name');
+            }
+
+            const { peletonName } = await peletonResponse.json();
+            const peletonHeader = document.getElementById('peletonHeader');
+            peletonHeader.textContent = `Members of ${peletonName}`;
+
+            const response = await fetch('/memberPeletonMembers');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const members = await response.json();
+            const membersTableBody = document.getElementById('membersTableBody');
+
+            members.forEach((member) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${member.surname}</td>
+                    <td>${member.address}</td>
+                    <td>${member.email}</td>
+                    <td>${member.phone}</td>
+                    <td><button onclick="editMember(${member.id})">Edit</button></td>
+                `;
+                membersTableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    async function editMember(memberId) {
+        try {
+            const response = await fetch(`/editProfile?id=${memberId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch member data');
+            }
+
+            const member = await response.json();
+
+            // Get the ID of the logged-in user
+            const loggedInUserId = getLoggedInUserId(); // You need to implement this function to retrieve the logged-in user's ID
+
+            if (member.id === loggedInUserId) {
+                window.location.href = `member/edit/?id=${memberId}`; // Redirect to the edit page
+            } else {
+                alert('You are not authorized to edit this user.'); // Show an error message if not authorized
+            }
+        } catch (error) {
+            console.error('Error editing member:', error);
+        }
+    }
+
+    function getLoggedInUserId(req){
+        // Check if session exists and user data is stored in the session
+        if (req.session && req.session.user && req.session.user.id) {
+            return req.session.user.id; // Return the logged-in user's ID
+        } else {
+            return undefined; // Return undefined if no user is logged in or session doesn't exist
+        }
+    }
+
+</script>
+
 </html>

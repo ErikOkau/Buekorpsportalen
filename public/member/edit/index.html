@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width='device-width', initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+<form action="/updateProfile" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" value="<%= member.name %>">
+  
+    <label for="surname">Surname:</label>
+    <input type="text" id="surname" name="surname" value="<%= member.surname %>">
+  
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" value="<%= member.email %>">
+  
+    <button type="submit">Update Profile</button>
+  </form>
+  
+</body>
+</html>

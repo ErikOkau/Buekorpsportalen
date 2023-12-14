@@ -5,14 +5,9 @@ import Database from 'better-sqlite3';
 import { sha256 } from './utils';
 import multer from 'multer';
 import { SessionData } from 'express-session';
+import './types.ts'
 
-declare module 'express-serve-static-core' {
-  interface Request {
-    session: SessionData;
-  }
-}
-
-
+import { Users } from './types';
 
 const app = express();
 const db = Database('database.db', { verbose: console.log });
@@ -27,6 +22,10 @@ app.use(session({
   saveUninitialized: true
 }));
 
+interface MemberData {
+  peleton_id: number;
+  name: string;
+}
 
 // Logout route
 app.get('/logout', (req: Request<{}, any, any, SessionData>, res: Response, next: NextFunction) => {
@@ -85,6 +84,15 @@ app.get('/leader', (req, res) => {
   res.redirect('public/leader/');
 });
 
+app.delete('/deleteAccount', (req, res) => {
+  res.status(403).send('You are not allowed to delete your account');
+});
+
+app.put('/changePassword', (req, res) => {
+  res.status(403).send('You are not allowed to change your password');
+});
+
+
 
 
 app.get('/showDB', (req, res) => {
@@ -105,8 +113,9 @@ app.post('/register', async (req, res) => {
 })
 
 
+// Register  member route
 app.post('/registerMember', async (req, res) => {
-  const { name, surname, email, password, role, memberAddress, memberPhone, assignPeleton } = req.body;
+  const { name, surname, email, password, role, memberAddress, memberPhone, assignPeleton, assignParent } = req.body;
 
   try {
     const hash = sha256(password);
@@ -114,27 +123,63 @@ app.post('/registerMember', async (req, res) => {
     const user = insertUserStmt.run(name, surname, email, hash, role);
 
     if (user && user.lastInsertRowid) {
-      const userId = user.lastInsertRowid; // Get the ID of the newly created user
-      const parentId = req.body.parent; // Get the parent ID from the request body
+      const userId = user.lastInsertRowid;
 
-      const insertMemberStmt = db.prepare('INSERT INTO members (user_id, name, surname, address, email, phone, peleton_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
-      insertMemberStmt.run(userId, name, surname, memberAddress, email, memberPhone, assignPeleton);
+      const insertMemberStmt = db.prepare('INSERT INTO members (user_id, name, surname, address, email, phone) VALUES (?, ?, ?, ?, ?, ?)');
+      insertMemberStmt.run(userId, name, surname, memberAddress, email, memberPhone);
 
-      if (parentId) {
-        // Assign the member to the parent in the member_parent table
-        const insertMemberParentStmt = db.prepare('INSERT INTO member_parent (member_id, parent_id) VALUES (?, ?)');
-        insertMemberParentStmt.run(userId, parentId);
+      if (assignPeleton) {
+        const peletonId = req.body.peletonId; // Get the peleton ID from the request body
+
+        // Check if the peleton ID is provided and valid
+        if (peletonId) {
+          const peletonCheckStmt = db.prepare('SELECT * FROM peleton WHERE id = ?');
+          const peleton = peletonCheckStmt.get(peletonId);
+
+          if (peleton) {
+            const insertPeletonStmt = db.prepare('UPDATE members SET peleton_id = ? WHERE user_id = ?');
+            insertPeletonStmt.run(peletonId, userId);
+          } else {
+            res.status(400).send('Invalid peleton ID');
+            return;
+          }
+        } else {
+          res.status(400).send('No peleton ID provided');
+          return;
+        }
+      }
+
+      if (assignParent) {
+        const parentId = req.body.parentId; // Get the parent ID from the request body
+
+        // Check if the parent ID is provided and valid
+        if (parentId) {
+          const parentCheckStmt = db.prepare('SELECT * FROM parents WHERE id = ?');
+          const parent = parentCheckStmt.get(parentId);
+
+          if (parent) {
+            const insertMemberParentStmt = db.prepare('INSERT INTO member_parent (member_id, parent_id) VALUES (?, ?)');
+            insertMemberParentStmt.run(userId, parentId);
+          } else {
+            res.status(400).send('Invalid parent ID');
+            return;
+          }
+        } else {
+          res.status(400).send('No parent ID provided');
+          return;
+        }
       }
 
       res.redirect('/');
     } else {
-        res.status(500).send('Failed to create member');
+      res.status(500).send('Failed to create member');
     }
   } catch (error) {
     console.error('Error creating user:', error);
     res.status(500).send('Failed to create user');
   }
 });
+
 
 app.post('/registerParent', async (req, res) => {
   const { name, surname, email, password, role, address, phone, assignPeleton } = req.body;
@@ -171,12 +216,10 @@ app.post('/registerParent', async (req, res) => {
 });
 
 
-
-
 // Login route
 app.post('/login', (req, res) => {
   const userSTMT = db.prepare('SELECT * FROM users WHERE email = ?');
-  const user = userSTMT.get(req.body.email) as { id: number, email: string, password: string, role: string };
+  const user = userSTMT.get(req.body.email) as Users;
 
   if (user) {
     const result = sha256(req.body.password) === user.password;
@@ -306,8 +349,6 @@ app.post('/admin/peleton', (req, res) => {
 });
 
 
-
-
 // Endpoint to retrieve existing companies
 app.get('/admin/companies', (req, res) => {
   const stmt = db.prepare('SELECT id, name FROM companies');
@@ -365,6 +406,51 @@ app.get('/admin/deleteCompany', (req, res) => {
     res.status(400).send('Invalid company ID');
   }
 });
+
+
+// Endpoint to fetch members of the logged-in user's peleton
+app.get('/memberPeletonMembers', (req, res) => {
+  const loggedInUserId = req.session?.user?.id;
+
+  const peletonIdQuery = db.prepare('SELECT peleton_id FROM members WHERE user_id = ?');
+  const peletonIdResult = peletonIdQuery.get(loggedInUserId) as MemberData;
+
+  if (peletonIdResult && 'peleton_id' in peletonIdResult) {
+    const peletonId = peletonIdResult.peleton_id;
+
+    const stmt = db.prepare('SELECT * FROM members WHERE peleton_id = ?');
+    const members = stmt.all(peletonId);
+
+    res.json(members);
+  } else {
+    res.status(404).send('Peleton not found for the logged-in user');
+  }
+});
+
+// Endpoint to fetch the peleton name of the logged-in user
+app.get('/getPeletonName', (req, res) => {
+  const loggedInUserId = req.session?.user?.id;
+
+  const peletonIdQuery = db.prepare('SELECT peleton_id FROM members WHERE user_id = ?');
+  const peletonIdResult = peletonIdQuery.get(loggedInUserId) as { peleton_id?: number };
+
+  if (peletonIdResult && 'peleton_id' in peletonIdResult) {
+    const peletonId = peletonIdResult.peleton_id || 0; // Default value if peleton_id is undefined
+
+    const peletonNameQuery = db.prepare('SELECT name FROM peleton WHERE id = ?');
+    const peletonNameResult = peletonNameQuery.get(peletonId) as { name?: string };
+
+    if (peletonNameResult && 'name' in peletonNameResult && peletonNameResult.name) {
+      const peletonName = peletonNameResult.name;
+      res.json({ peletonName });
+    } else {
+      res.status(404).send('Peleton name not found');
+    }
+  } else {
+    res.status(404).send('Peleton not found for the logged-in user');
+  }
+});
+
 
 // Endpoint to fetch users
 app.get('/admin/showUsers', (req, res) => {

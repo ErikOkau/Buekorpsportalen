@@ -14,8 +14,13 @@
     }
 
     input {
-        max-width: 29rem;
-    
+        max-width: 29rem;   
+    }
+
+    h1 {
+        color: white;
+        text-align: center;
+        margin-top: 5rem;
     }
 </style>
 <body>
@@ -36,6 +41,7 @@
         </ul>
     </nav>
 
+    <h1>Create Peleton</h1>
     <form id="peletonForm" action="/admin/peleton" method="POST">
         <label for="name">Peleton Name:</label>
         <input type="text" id="name" name="name" required>
