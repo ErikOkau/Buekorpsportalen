@@ -72,6 +72,17 @@ app.get('/editMember', (req, res) => {
   }
 });
 
+app.get('editCompany', (req, res) => {
+  const companyId = req.query.id;
+  if (companyId) {
+    const stmt = db.prepare('SELECT * FROM companies WHERE id = ?');
+    const company = stmt.get(companyId);
+    res.json(company);
+  } else {
+    res.status(400).send('Invalid company ID');
+  }
+});
+
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'public/index.html'));
 });
@@ -310,6 +321,32 @@ app.put('/updateUser', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/editCompany', (req, res) => {
+  const companyId = req.query.id;
+  if (companyId) {
+    const stmt = db.prepare('SELECT * FROM companies WHERE id = ?');
+    const company = stmt.get(companyId);
+    res.json(company);
+  } else {
+    res.status(400).send('Invalid company ID');
+  }
+});
+
+app.put('/updateCompany', (req, res) => {
+  const { id, name, description, logo, address, city, leader_id } = req.body;
+  if (!id) {
+    res.status(400).send('Company id is required');
+    return;
+  }
+  const stmt = db.prepare(`UPDATE companies SET name = ?, description = ?, logo = ?, address = ?, city = ?, leader_id = ? WHERE id = ?`);
+  const info = stmt.run(name, description, logo, address, city, leader_id, id);
+  if (info.changes > 0) {
+    res.send('Company updated successfully');
+  } else {
+    res.status(404).send('Company not found');
+  }
+});
+
 app.post('/admin/company', upload.single('logo'), (req, res) => {
   const { name, description, address, city, leader } = req.body;
   const logo = req.file ? req.file.filename : null; // Get the path of the uploaded file
@@ -434,7 +471,20 @@ app.get('/admin/showUsers', (req, res) => {
   res.json(users);
 });
 
-
+app.put('/updateCompany', (req, res) => {
+  const { id, name, description, logo, address, city, leader_id } = req.body;
+  if (!id) {
+    res.status(400).send('Company id is required');
+    return;
+  }
+  const stmt = db.prepare(`UPDATE companies SET name = ?, description = ?, logo = ?, address = ?, city = ?, leader_id = ? WHERE id = ?`);
+  const info = stmt.run(name, description, logo, address, city, leader_id, id);
+  if (info.changes > 0) {
+    res.send('Company updated successfully');
+  } else {
+    res.status(404).send('Company not found');
+  }
+});
 
 function getUserById(userId: number) {
   const stmt = db.prepare('SELECT name, surname FROM users WHERE leader_id = ?');
