@@ -44,7 +44,6 @@
     </table>
 
 
-
     <script src="../../ts/main.ts" defer></script>
 </body>
 <script>
@@ -61,7 +60,7 @@
 
             const response = await fetch('/memberPeletonMembers');
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Error fetching members');
             }
 
             const members = await response.json();

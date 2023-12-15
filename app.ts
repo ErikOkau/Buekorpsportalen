@@ -471,21 +471,6 @@ app.get('/admin/showUsers', (req, res) => {
   res.json(users);
 });
 
-app.put('/updateCompany', (req, res) => {
-  const { id, name, description, logo, address, city, leader_id } = req.body;
-  if (!id) {
-    res.status(400).send('Company id is required');
-    return;
-  }
-  const stmt = db.prepare(`UPDATE companies SET name = ?, description = ?, logo = ?, address = ?, city = ?, leader_id = ? WHERE id = ?`);
-  const info = stmt.run(name, description, logo, address, city, leader_id, id);
-  if (info.changes > 0) {
-    res.send('Company updated successfully');
-  } else {
-    res.status(404).send('Company not found');
-  }
-});
-
 function getUserById(userId: number) {
   const stmt = db.prepare('SELECT name, surname FROM users WHERE leader_id = ?');
   const user = stmt.get(userId);

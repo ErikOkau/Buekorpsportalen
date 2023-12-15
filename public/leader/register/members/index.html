@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="stylesheet" href="../../../css/create_account.css">
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="../../../css/nav.css">
+</head>
+<style>
+    .register-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 5%;
+        animation: slideIn 1s ease-in-out;
+    }
+
+    h1 {
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 400px;
+        padding: 2rem;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        width: 100%;
+        background-color: white;
+    }
+
+    label {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn {
+        width: 100%;
+        padding: 0.5rem;
+        margin-top: 1rem;
+        background-color: #ff4081;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+        transition: background-color 0.5s ease-in-out;
+    }
+
+    .btn:hover {
+        background-color: #333;
+    }
+
+    #remove_bg,
+    #password,
+    #email,
+    #name,
+    #surname {
+        background-color: white;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(-100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .dropdown-content {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        background-color: white;
+    }
+</style>
+
+<body>
+    <nav>
+        <ul class="animated-nav">
+            <li>
+                <a href="../index.html" class="nav-link">Admin Dashboard</a>
+            </li>
+            <li>
+                <a href="../../users/" class="nav-link">Brukere</a>
+            </li>
+            <li>
+                <a href="../../companies/" class="nav-link">Kompanier</a>
+            </li>
+            <li>
+                <a href="/logout" id="logoutBtn" class="nav-link">Sign out</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Opprett bruker samtidig som lage medlem -->
+    <div class="register-container">
+        <h1>Opprett medlem</h1>
+        <form action="/registerMember" method="POST">
+            <div class="form-group">
+                <label id="remove_bg" for="name">Name:</label>
+                <input type="text" name="name" id="name" required>
+            </div>
+            <div class="form-group">
+                <label id="remove_bg" for="surname">Surname:</label>
+                <input type="text" name="surname" id="surname" required>
+            </div>
+            <div class="form-group">
+                <label id="remove_bg" for="email">Email:</label>
+                <input type="email" name="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label id="remove_bg" for="password">Password:</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+            <div class="form-group">
+                <label for="memberAddress">Address:</label>
+                <input type="text" name="memberAddress" id="memberAddress">
+            </div>
+            <div class="form-group">
+                <label for="memberPhone">Phone:</label>
+                <input type="text" name="memberPhone" id="memberPhone">
+            </div>
+            <div class="form-group">
+                <label id="remove_bg" for="role">Role:</label>
+                <select class="dropdown-content" name="role" id="role" required>
+                    <option value="member" id="remove_bg">Member</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="peletonCheckbox">
+                <label for="assignPeleton">Assign to Peleton</label>
+                <input type="checkbox" name="assignPeleton" id="assignPeleton">
+            </div>
+            <!-- Dropdowns that is hidden unless matched checkbox is checked -->
+            <div class="form-group" id="peletonDropdown" style="display: none;">
+                <label for="peleton">Choose Peleton:</label>
+                <select class="dropdown-content" name="peleton" id="peleton">
+                    <option value="" id="remove_bg">Choose Peleton</option>
+                    <!-- Options populated dynamically -->
+                </select>
+            </div>
+
+            <input type="hidden" name="peletonId" id="selectedPeletonId">
+
+
+            <div class="form-group" id="parentCheckbox">
+                <label for="assignParent">Assign to Parent</label>
+                <input type="checkbox" name="assignParent" id="assignParent">
+            </div>
+
+            <!-- Dropdowns that is hidden unless matched checkbox is checked -->
+            <div class="form-group" id="parentDropdown" style="display: none;">
+                <label for="parent">Choose Parent:</label>
+                <select class="dropdown-content" name="parent" id="parent">
+                    <option value="" id="remove_bg">Choose Parent</option>
+                    <!-- Options populated dynamically -->
+                </select>
+            </div>
+            <input type="hidden" name="selectedParentId" id="selectedParentId">
+
+            <input class="btn" type="submit" value="Register user">
+        </form>
+    </div>
+
+    <script>
+        // Show peleton dropdown if checkbox is checked
+        document.getElementById('assignPeleton').addEventListener('change', async function () {
+            const assignPeleton = document.getElementById('assignPeleton');
+
+            if (assignPeleton.checked) {
+                document.getElementById('peletonDropdown').style.display = 'block';
+                // Fetch and populate peleton options dynamically here
+            } else {
+                // Hide peleton dropdown if checkbox is unchecked
+                document.getElementById('peletonDropdown').style.display = 'none';
+            }
+        });
+
+        // Store the selected peleton's ID in hidden input field
+        document.getElementById('peleton').addEventListener('change', function () {
+            const selectedPeletonId = document.getElementById('peleton').value;
+
+            document.getElementById('selectedPeletonId').value = selectedPeletonId;
+        });
+
+
+        // Fetch peletons from backend and populate dropdown
+        async function fetchPeletons() {
+            try {
+                const response = await fetch('/admin/showPeletons');
+                const peletons = await response.json();
+
+                const peletonDropdown = document.getElementById('peleton');
+
+                peletons.forEach(peleton => {
+                    const option = document.createElement('option');
+                    option.value = peleton.id;
+                    option.textContent = peleton.name;
+                    peletonDropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.log('Error fetching peletons:', error);
+            }
+        }
+
+        document.getElementById('assignParent').addEventListener('change', async function () {
+            const assignParent = document.getElementById('assignParent');
+
+            if (assignParent.checked) {
+                document.getElementById('parentDropdown').style.display = 'block';
+            } else {
+                document.getElementById('parentDropdown').style.display = 'none';
+            }
+        });
+
+        // Store the selected parent's ID in the hidden input field
+        document.getElementById('parent').addEventListener('change', function () {
+            const selectedParentId = document.getElementById('parent').value;
+            document.getElementById('selectedParentId').value = selectedParentId;
+        });
+
+        async function fetchParents() {
+            try {
+                const response = await fetch('/admin/showParents');
+                const members = await response.json();
+
+                const parentDropdown = document.getElementById('parent');
+
+                members.forEach(member => {
+                    const option = document.createElement('option');
+                    option.value = member.id;
+                    option.textContent = member.name;
+                    parentDropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.log('Error fetching members:', error);
+            }
+        }
+
+        // Run async function when DOM is loaded
+        document.addEventListener('DOMContentLoaded', fetchPeletons);
+        document.addEventListener('DOMContentLoaded', fetchParents);
+    </script>
+</body>
+
+</html>
