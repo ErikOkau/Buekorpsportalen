@@ -92,9 +92,6 @@ app.put('/changePassword', (req, res) => {
   res.status(403).send('You are not allowed to change your password');
 });
 
-
-
-
 app.get('/showDB', (req, res) => {
   const role = req.query.role;
   const stmt = db.prepare('SELECT * FROM users WHERE role = ?');
@@ -111,7 +108,6 @@ app.post('/register', async (req, res) => {
 
   res.redirect('/');
 })
-
 
 // Register  member route
 app.post('/registerMember', async (req, res) => {
@@ -180,7 +176,6 @@ app.post('/registerMember', async (req, res) => {
   }
 });
 
-
 app.post('/registerParent', async (req, res) => {
   const { name, surname, email, password, role, address, phone, assignPeleton } = req.body;
 
@@ -215,7 +210,6 @@ app.post('/registerParent', async (req, res) => {
   }
 });
 
-
 // Login route
 app.post('/login', (req, res) => {
   const userSTMT = db.prepare('SELECT * FROM users WHERE email = ?');
@@ -244,24 +238,12 @@ app.post('/login', (req, res) => {
   }
 });
 
-
 app.delete('/deleteUser', (req, res) => {
   const userId = req.query.id;
   if (userId) {
     const deleteStmt = db.prepare('DELETE FROM users WHERE id = ?');
     deleteStmt.run(userId);
     res.sendStatus(200); // Respond with success status if deletion is successful
-  } else {
-    res.status(400).send('Invalid user ID');
-  }
-});
-
-app.get('/editUser', (req, res) => {
-  const userId = req.query.id;
-  if (userId) {
-    const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
-    const user = stmt.get(userId);
-    res.redirect('/admin/edit/user/?id=' + userId);
   } else {
     res.status(400).send('Invalid user ID');
   }
@@ -278,6 +260,16 @@ app.get('/getUser', (req, res) => {
   }
 });
 
+app.get('/editUser', (req, res) => {
+  const userId = req.query.id;
+  if (userId) {
+    const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
+    const user = stmt.get(userId);
+    res.redirect('/admin/edit/user/?id=' + userId);
+  } else {
+    res.status(400).send('Invalid user ID');
+  }
+});
 
 app.put('/updateUser', async (req: Request, res: Response) => {
   const userId = req.query.id;
@@ -318,25 +310,11 @@ app.put('/updateUser', async (req: Request, res: Response) => {
   }
 });
 
-app.put('/updateCompany', async (req: Request, res: Response) => {
-  const companyId = req.query.id;
-  if (companyId) {
-    const { companyName, companyDescription, companyLogo, companyAddress, companyCity } = req.body;
-
-    const updateCompanyStmt = db.prepare('UPDATE companies SET name = ?, description = ?, logo = ?, address = ?, city = ?, WHERE id = ?');
-    updateCompanyStmt.run(companyName, companyDescription, companyLogo, companyAddress, companyCity, companyId);
-    
-    res.sendStatus(200); // Respond with success status if update is successful
-  } else {
-    res.status(400).send('Invalid company ID');
-  }
-});
-
 app.post('/admin/company', upload.single('logo'), (req, res) => {
-  const { name, description, address, city } = req.body;
+  const { name, description, address, city, leader } = req.body;
   const logo = req.file ? req.file.filename : null; // Get the path of the uploaded file
-  const insertStmt = db.prepare('INSERT INTO companies (name, description, logo, address, city) VALUES (?, ?, ?, ?, ?)');
-  insertStmt.run(name, description, logo, address, city);
+  const insertStmt = db.prepare('INSERT INTO companies (name, description, logo, address, city, leader_id) VALUES (?, ?, ?, ?, ?, ?)');
+  insertStmt.run(name, description, logo, address, city, leader);
   res.json({ message: 'Company added'	})
 });
 
@@ -347,7 +325,6 @@ app.post('/admin/peleton', (req, res) => {
 
   res.redirect('/admin/register/peleton');
 });
-
 
 // Endpoint to retrieve existing companies
 app.get('/admin/companies', (req, res) => {
@@ -367,7 +344,7 @@ app.get('/admin/showPeletons', (req, res) => {
 
 // Endpoint to fetch all companies
 app.get('/admin/showCompanies', (req, res) => {
-  const stmt = db.prepare('SELECT * FROM companies');
+  const stmt = db.prepare('SELECT companies.id, companies.name, companies.description, companies.logo, companies.address, companies.city, users.name AS owner_name FROM companies LEFT JOIN users ON companies.leader_id = users.id');
   const companies = stmt.all();
   
   res.json(companies);
@@ -396,7 +373,7 @@ app.get('/admin/peletonsByCompany/:companyId', (req, res) => {
   res.json(peletons);
 });
 
-app.get('/admin/deleteCompany', (req, res) => {
+app.delete('/admin/deleteCompany', (req, res) => {
   const companyId = req.query.id;
   if (companyId) {
     const deleteStmt = db.prepare('DELETE FROM companies WHERE id = ?');
@@ -406,7 +383,6 @@ app.get('/admin/deleteCompany', (req, res) => {
     res.status(400).send('Invalid company ID');
   }
 });
-
 
 // Endpoint to fetch members of the logged-in user's peleton
 app.get('/memberPeletonMembers', (req, res) => {
@@ -451,13 +427,22 @@ app.get('/getPeletonName', (req, res) => {
   }
 });
 
-
 // Endpoint to fetch users
 app.get('/admin/showUsers', (req, res) => {
-  const stmt = db.prepare('SELECT * FROM users'); 
+  const stmt = db.prepare('SELECT id, name, surname, email, password, role, leader_id FROM users'); 
   const users = stmt.all();
   res.json(users);
 });
+
+
+
+function getUserById(userId: number) {
+  const stmt = db.prepare('SELECT name, surname FROM users WHERE leader_id = ?');
+  const user = stmt.get(userId);
+  return user;
+}
+
+
 
 
 app.listen(3000, () => {

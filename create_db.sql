@@ -6,11 +6,10 @@ CREATE TABLE IF NOT EXISTS users (
     surname TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    role TEXT NOT NULL DEFAULT 'member',
-    leader_id INTEGER, 
-    FOREIGN KEY(leader_id) REFERENCES users(id) ON DELETE SET NULL
+    role TEXT NOT NULL DEFAULT 'member'
 );
 
+ALTER TABLE users ADD COLUMN leader_id INTEGER;
 
 
 CREATE TABLE IF NOT EXISTS members (
@@ -25,7 +24,6 @@ CREATE TABLE IF NOT EXISTS members (
     FOREIGN KEY(user_id) REFERENCES users(id),
     FOREIGN KEY(peleton_id) REFERENCES peleton(id)
 );
-
 
 
 CREATE TABLE IF NOT EXISTS peleton (
@@ -45,7 +43,9 @@ CREATE TABLE IF NOT EXISTS companies (
     address TEXT,
     city TEXT,
     user_id INTEGER,
-    FOREIGN KEY(user_id) REFERENCES users(id)
+    leader_id INTEGER,
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(leader_id) REFERENCES users(id)
 );
 
 

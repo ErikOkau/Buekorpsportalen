@@ -9,7 +9,16 @@
   <link rel="stylesheet" href="../../../css/main.css">
   <link rel="stylesheet" href="../../../css/users.css">
 </head>
+<style>
+  .logo {
+    width: 20%;
+  }
 
+  td:hover {
+    cursor: pointer;
+  
+  }
+</style>
 <body>
   <nav>
     <ul class="animated-nav">
@@ -47,13 +56,12 @@
 
     async function fetchCompanies() {
       try {
-        const response = await fetch('/admin/showCompanies'); // Fetch companies from backend
+        const response = await fetch('/admin/showCompanies');
         const companies = await response.json();
         const companiesTable = document.getElementById('companiesTable');
 
-        companies.forEach(company => {
-          const table = document.createElement('table');
-          table.innerHTML = `
+        const table = document.createElement('table');
+        table.innerHTML = `
             <thead>
               <tr>
                 <th class="id">ID</th>
@@ -66,23 +74,29 @@
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <tr> 
-                <td class="id" onclick="fetchPeletonsByCompany(${company.id})">${company.id}</td>
-                <td class="name" onclick="fetchPeletonsByCompany(${company.id})">${company.name}</td>
-                <td class="surname" onclick="fetchPeletonsByCompany(${company.id})">${company.description}</td>
-                <td class="email" onclick="fetchPeletonsByCompany(${company.id})">${company.logo}</td>
-                <td class="role" onclick="fetchPeletonsByCompany(${company.id})">${company.address}</td>
-                <td class="actions" onclick="fetchPeletonsByCompany(${company.id})">${company.city}</td>
-                <td class="actions" onclick="fetchPeletonsByCompany(${company.id})">${company.leader}</td>
-                <td class="actions">
-                <button class="edit_btn" onclick="location.href='/updateCompany?id=${company.id}'">Edit</button>
-                <button class="delete_btn" onclick="deleteCompany(${company.id})">Delete</button>
-                </td>
-              </tr>
-            </tbody>
+            <tbody></tbody>
           `;
-          companiesTable.appendChild(table);
+
+        companiesTable.appendChild(table);
+        const tbody = table.querySelector('tbody');
+
+        companies.forEach( async (company) => {
+          const row = document.createElement('tr');
+          const leaderName = company.owner_name; // Get the leader's name from the response
+          row.innerHTML = `
+              <td class="id" onclick="fetchPeletonsByCompany(${company.id})">${company.id}</td>
+              <td class="name" onclick="fetchPeletonsByCompany(${company.id})">${company.name}</td>
+              <td class="surname" onclick="fetchPeletonsByCompany(${company.id})">${company.description}</td>
+              <td class="logo" onclick="fetchPeletonsByCompany(${company.id})">${company.logo}</td>
+              <td class="role" onclick="fetchPeletonsByCompany(${company.id})">${company.address}</td>
+              <td class="actions" onclick="fetchPeletonsByCompany(${company.id})">${company.city}</td>
+              <td class="actions" onclick="fetchPeletonsByCompany(${company.id})">${leaderName}</td>
+              <td class="actions">
+                <button class="edit_btn" onclick="location.href='/admin/edit/company?id=${company.id}'">Edit</button>
+                <button class="delete_btn" onclick="deleteCompany(${company.id})">Delete</button>
+              </td>
+            `;
+          tbody.appendChild(row);
         });
       } catch (error) {
         console.error('Error fetching companies:', error);
@@ -93,7 +107,7 @@
       try {
         const confirmation = confirm('Are you sure you want to delete this company?');
         if (confirmation) {
-          await fetch(`/admin/deleteCompany/${companyId}`, {
+          await fetch(`/admin/deleteCompany?id=${companyId}`, {
             method: 'DELETE'
           });
           // refresh after deleteion
@@ -101,6 +115,16 @@
         }
       } catch (error) {
         console.error('Error deleting company:', error);
+      }
+    }
+
+    async function fetchLeaderNameById(leaderId) {
+      try {
+        const response = await fetch(`/admin/getLeaderName?id=${leaderId}`);
+        const leader = await response.json();
+        return leader.name;
+      } catch (error) {
+        console.error('Error fetching leader name:', error);
       }
     }
 

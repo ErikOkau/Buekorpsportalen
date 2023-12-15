@@ -81,17 +81,19 @@
             const logo = document.getElementById('logo').files[0];
             const address = document.getElementById('address').value;
             const city = document.getElementById('city').value;
+            const leaderId = document.getElementById('leader').value;
 
             const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries())
+            formData.append('leaderId', leaderId); // Append leaderId to the form data
+            // const data = Object.fromEntries(formData.entries())
 
             let reader = new FileReader()
             reader.onload = function () {
                 document.getElementById("display").src = reader.result
             }
 
-            reader.readAsDataURL(data.logo)
-
+            reader.readAsDataURL(logo)
+            
             // Perform a fetch request to submit form data to the server
             try {
                 const res = await fetch('/admin/company', {
@@ -102,30 +104,13 @@
                 if (!res.ok) {
                     throw new Error('Failed to create company');
                 }
-
-                const result = await res.json();
-                // Optionally, handle the result if needed
-
-                // Redirect to another page or show a success message upon successful company creation
+    
                 alert('Company added successfully');
-                // Redirect to a page, for example:
-                window.location.href = '/admin/companies'; // Redirect to the companies listing page
+                window.location.href = '/admin/companies'; 
             } catch (error) {
                 console.error('Error creating company:', error);
-                // Handle errors, show an alert, or take appropriate action
                 alert('Failed to create company. Please try again.');
             }
-
-            /* const res = await fetch('/admin/company', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: formData
-            })
-
-            const result = await res.json() */
-
         });
 
 
