@@ -177,7 +177,6 @@
             <div class="form-group">
                 <label id="remove_bg" for="role">Role:</label>
                 <select class="dropdown-content" name="role" id="role" required>
-                    <option value="" id="remove_bg">Choose role</option>
                     <option value="parent" id="remove_bg">Parent</option>
                 </select>
             </div>
@@ -260,48 +259,25 @@
             }
         }
 
-        let childCount = 0;
-
         document.getElementById('assignMember').addEventListener('change', async function () {
             const assignParent = document.getElementById('assignMember');
 
-            if (assignParent.checked && childCount < 3) {
-                const memberDropdown = document.getElementById('memberDropdown');
-                memberDropdown.style.display = 'block';
-
-                // Check if dropdown already exists for this child count
-                if (!document.getElementById(`child${childCount}`)) {
-                    // Create a new dropdown for each child
-                    const newDropdown = document.createElement('select');
-                    newDropdown.id = `child${childCount}`;
-                    newDropdown.name = `child${childCount}`;
-                    newDropdown.classList.add('dropdown-content');
-                    memberDropdown.appendChild(newDropdown);
-
-                    // Fetch and populate child options dynamically here
-                    await fetchMembers(newDropdown.id);
-
-                    childCount++;
-                }
+            if (assignParent.checked) {
+                document.getElementById('memberDropdown').style.display = 'block';
+                // Fetch and populate parent options dynamically here
             } else {
                 // Hide parent dropdown if checkbox is unchecked
                 document.getElementById('memberDropdown').style.display = 'none';
             }
         });
 
-        // Update the event listener for member selection
-        document.getElementById('member').addEventListener('change', function () {
-            const selectedMemberId = document.getElementById('member').value;
-            // Set the value of the hidden input field to the selected member's ID
-            document.getElementById('selectedMemberId').value = selectedMemberId;
-        });
 
-        async function fetchMembers(dropdownId) {
+        async function fetchMembers() {
             try {
-                const response = await fetch('/admin/showMembers');
+                const response = await fetch('/admin/showMembers'); 
                 const members = await response.json();
 
-                const parentDropdown = document.getElementById(dropdownId);
+                const parentDropdown = document.getElementById('member');
 
                 members.forEach(member => {
                     const option = document.createElement('option');
@@ -312,7 +288,7 @@
             } catch (error) {
                 console.log('Error fetching members:', error);
             }
-        }
+        } 
 
         // Run async function when DOM is loaded
         document.addEventListener('DOMContentLoaded', fetchPeletons);
